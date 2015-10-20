@@ -6,7 +6,11 @@ int main(int argc, char* argv[]) {
 	}
 	else {
 		FILE* file = fopen(argv[1], "r");
+
 		if(!file) printf("Could not open file \"%s\".\n", argv[1]);
-		else printf("\"%s\" opened successfully.\n", argv[1]);
+		else {
+			printf("\"%s\" opened successfully.\n", argv[1]);
+			fclose(file);
+		}
 	}
 }
