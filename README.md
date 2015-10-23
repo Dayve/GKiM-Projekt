@@ -5,7 +5,7 @@
    - nazwa pliku
    - 0-1 dla rodzaju kodowania
    - 0-1 dla opcji skala szarości
- * **Dekodowanie do .bmp  **
+ * **Dekodowanie do .bmp**
 
 _Biblioteka, której będziemy używać to [SDL](https://www.libsdl.org/), ewentualnie któraś z innych 
 wymienionych na [stronie prowadzącego](https://dydaktykakn.wordpress.com/) jeśli będą takie propozycje._
