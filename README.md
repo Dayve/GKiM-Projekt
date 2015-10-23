@@ -7,5 +7,7 @@
    - 0-1 dla opcji skala szarości
  * **Dekodowanie do .bmp**
 
+[Pseudo-Wiki do projektu](https://github.com/Dayve/GKiM-Projekt/wiki)
+
 _Biblioteka, której będziemy używać to [SDL](https://www.libsdl.org/), ewentualnie któraś z innych 
 wymienionych na [stronie prowadzącego](https://dydaktykakn.wordpress.com/) jeśli będą takie propozycje._
