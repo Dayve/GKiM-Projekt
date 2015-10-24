@@ -5,7 +5,7 @@ OBJS = main.cpp
 CC = g++
 
 # Compiler flags:
-C_FLAGS = -Wall
+C_FLAGS = -Wall -Wextra
 
 # Libraries:
 L_FLAGS = -lsfml-graphics
