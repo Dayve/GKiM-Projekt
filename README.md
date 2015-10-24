@@ -9,5 +9,4 @@
 
 [Pseudo-Wiki do projektu](https://github.com/Dayve/GKiM-Projekt/wiki)
 
-_Biblioteka, której będziemy używać to [SDL](https://www.libsdl.org/), ewentualnie któraś z innych 
-wymienionych na [stronie prowadzącego](https://dydaktykakn.wordpress.com/) jeśli będą takie propozycje._
+_Biblioteka, której będziemy używać to [SFML](http://www.sfml-dev.org/index.php)._

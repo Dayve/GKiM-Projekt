@@ -1,14 +1,14 @@
 # Files:
-OBJS = main.c
+OBJS = main.cpp
 
 # Compiler:
-CC = gcc
+CC = g++
 
 # Compiler flags:
 C_FLAGS = -Wall
 
 # Libraries:
-L_FLAGS = -lSDL2
+L_FLAGS = -lsfml-graphics
 
 # Name of the executable file:
 OBJ_NAME = app
