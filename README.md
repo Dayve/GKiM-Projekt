@@ -9,4 +9,4 @@
 
 [Pseudo-Wiki do projektu](https://github.com/Dayve/GKiM-Projekt/wiki)
 
-_Biblioteka, której będziemy używać to [SFML](http://www.sfml-dev.org/index.php)._
+_Biblioteka, której będziemy używać to [SFML](http://www.sfml-dev.org/index.php).<br/>Pytania o projekt można zadawać mi na FB._
