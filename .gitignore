@@ -26,7 +26,10 @@
 
 # Images
 *.bmp
+*.png
 
-# Folder with binaries:
-/bin
+# Folders with local files:
+*/bin
+*/obj
+*/files
 
