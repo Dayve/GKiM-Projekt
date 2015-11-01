@@ -9,3 +9,4 @@ void ImageWrapper::Load(const std::string &filename) {
 		cout << "Error while loading image.\n";
 }
 
+

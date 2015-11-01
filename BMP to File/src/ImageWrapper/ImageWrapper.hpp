@@ -3,6 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 
+
 class ImageWrapper {
 	private:
 		sf::Image img;
