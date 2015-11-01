@@ -19,6 +19,5 @@ int main(int argc, char* argv[]) {
 		ImgObj.Load("../data/" + filename);
 	}
 
-
 	return 0;
 }
