@@ -2,13 +2,20 @@
 #define _IMAGEWRAPPER_HPP_
 
 #include <SFML/Graphics.hpp>
+#include <vector>
 
 class ImageWrapper {
 	private:
 		sf::Image img;
+		bool loadedFlag;
+		std::vector<sf::Uint8> buffer;		// or <sf::Color>?
 
 	public:
-		void Load(const std::string &filename);
+		ImageWrapper();
+		~ImageWrapper();
+
+		void Load(const std::string& filename);
+		void ExportFile(bool codingType, bool grayscale, const std::string& dataDir);
 };
 
 #endif
