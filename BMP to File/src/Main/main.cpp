@@ -1,7 +1,7 @@
-#include <SFML/Graphics.hpp> // Not necessary here
+#include <SFML/Graphics.hpp> // Not needed here
 #include <iostream>
 
-#include "../include/test.hpp"
+#include "../Class1/class1.hpp"
 
 using namespace std; 
 
@@ -10,7 +10,6 @@ int main(int argc, char* argv[]) {
 	bool codingType, grayscale;
 
 	sf::Image img;
-
 
 	if(argc != 4) {
 		cout << "Usage: "<<argv[0]<<" filename 0/1(coding type) 0/1(grayscale)\n";
@@ -21,7 +20,8 @@ int main(int argc, char* argv[]) {
 		grayscale = argv[3];
 	}
 
-	fun();
+	Class1 obj;
+	obj.fun();
 
 	return 0;
 }

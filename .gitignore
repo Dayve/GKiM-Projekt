@@ -1,35 +1,4 @@
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
-
-# Images
-*.bmp
-*.png
-
-# Folders with local files:
-*/bin
-*/obj
-*/files
+# Folders with local/generated files:
+**/bin
+**/data
 
