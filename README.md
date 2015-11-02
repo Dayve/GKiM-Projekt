@@ -4,7 +4,11 @@
  * **Kodowanie do naszego formatu. Trzy argumenty na wejściu:**
    - nazwa pliku
    - 0-1 dla rodzaju kodowania
+     + 0 kodowanie arytmetyczne
+	 + 1 kodowanie Byterun
    - 0-1 dla opcji skala szarości
+     + 0 z zachowaniem kolorów
+     + 1 przejście na odcienie szarości
  * **Dekodowanie do .bmp**
 
-[Wiki do projektu](https://github.com/Dayve/GKiM-Projekt/wiki)
+Więcej informacji: [Wiki do projektu](https://github.com/Dayve/GKiM-Projekt/wiki)

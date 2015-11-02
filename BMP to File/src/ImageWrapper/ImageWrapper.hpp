@@ -8,7 +8,7 @@ class ImageWrapper {
 	private:
 		sf::Image img;
 		bool loadedFlag;
-		std::vector<sf::Uint8> buffer;		// or <sf::Color>?
+		std::vector<sf::Uint8> buffer;
 
 	public:
 		ImageWrapper();
