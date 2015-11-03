@@ -13,11 +13,11 @@ ImageWrapper::~ImageWrapper() {}
 
 
 void ImageWrapper::Load(const string& filename) {
-	if(img.loadFromFile(filename))
+	if(img.loadFromFile(filename)) {
 		cout << filename <<" loaded\n";
-	else
-		cout << "Error while loading image.\n";
-	loadedFlag = true;
+		loadedFlag = true;
+	}
+	else cout << "Error while loading image.\n";
 }
 
 

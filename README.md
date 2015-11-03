@@ -4,7 +4,7 @@
  * **Kodowanie do naszego formatu. Trzy argumenty na wejściu:**
    - nazwa pliku
    - 0-1 dla rodzaju kodowania
-     + 0 kodowanie arytmetyczne
+     + 0 kodowanie arytmetyczne na 5 bitach
 	 + 1 kodowanie Byterun
    - 0-1 dla opcji skala szarości
      + 0 z zachowaniem kolorów
