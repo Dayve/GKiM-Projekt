@@ -14,10 +14,10 @@ class ArithmeticCoder {
 		void Encode();
 
 	private:
-		std::map<sf::Uint8, int> Occurences;
+		std::map<sf::Uint8, int> Occurrences;
 		std::map<sf::Uint8, double> Probabilities;
 
-		void AssignOccurences();
+		void AssignOccurrences();
 		void AssignProbabilities();
 
 		void PrintOut();

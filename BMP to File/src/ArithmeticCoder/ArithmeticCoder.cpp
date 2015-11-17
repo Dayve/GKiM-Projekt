@@ -17,7 +17,7 @@ ArithmeticCoder::~ArithmeticCoder() {
 }
 
 
-void ArithmeticCoder::AssignOccurences() {
+void ArithmeticCoder::AssignOccurrences() {
 	map<sf::Uint8, int>::iterator ocIter;		// For holding a search result only
 
 	// For every pixel value in buffer:
@@ -31,8 +31,6 @@ void ArithmeticCoder::AssignOccurences() {
 
 
 void ArithmeticCoder::AssignProbabilities() {
-	map<sf::Uint8, double>::iterator prIter;	// For holding a search result only
-
 	// For every pixel value in buffer:
 	for(int i=0 ; i<(*buffer).size() ; ++i) {
 		Probabilities[(*buffer)[i]] = static_cast<double>(Occurences[(*buffer)[i]])/(*buffer).size();
@@ -42,8 +40,8 @@ void ArithmeticCoder::AssignProbabilities() {
 
 void ArithmeticCoder::PrintOut() {
 //	Printing out - not the best idea for large amounts of pixels:
-	cout << " Occurences:\n";
-	for(auto elem : Occurences) {	// Type of the variable will be automatically deduced from its initializer (C++11)
+	cout << " Occurrences:\n";
+	for(auto elem : Occurrences) {	// Type of the variable will be automatically deduced from its initializer (C++11)
 		int prin = static_cast<int>(elem.first);	// We use casting to int only because cout can't handle sf::Uint8
 		cout << prin << " " << elem.second << "\n";
 	}
@@ -62,7 +60,7 @@ void ArithmeticCoder::PrintOut() {
 
 
 void ArithmeticCoder::Encode() {
-	AssignOccurences();
+	AssignOccurrences();
 	AssignProbabilities();
 
 	PrintOut();
@@ -70,8 +68,9 @@ void ArithmeticCoder::Encode() {
 //	Getting the fractional value:
 	double upperBound = 0.0, lowerBound = 0.0;
 
+	/* TODO
 	for(int i=0 ; i<(*buffer).size() ; ++i) {
-		// TODO
 	}
+	*/
 }
 
