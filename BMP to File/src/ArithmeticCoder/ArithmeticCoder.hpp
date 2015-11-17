@@ -22,7 +22,7 @@ class ArithmeticCoder {
 
 		void PrintOut();
 
-		std::vector<sf::Uint8>* buffer;		// Remote buffer pointer
+		std::vector<sf::Uint8>* buffer;		// Pointer to a remote buffer
 };
 
 #endif

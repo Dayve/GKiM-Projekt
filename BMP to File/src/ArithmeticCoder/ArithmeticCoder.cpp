@@ -20,9 +20,9 @@ ArithmeticCoder::~ArithmeticCoder() {
 void ArithmeticCoder::AssignOccurrences() {
 	map<sf::Uint8, int>::iterator ocIter;		// For holding a search result only
 
-	// For every pixel value in buffer:
+	// For every pixel's component value in buffer:
 	for(int i=0 ; i<(*buffer).size() ; ++i) {
-		// If a pixel value is has not yet occured (as we iterate through buffer) add it to map.
+		// If a pixel's component value is has not yet occured (as we iterate through buffer) add it to map.
 		// Else, increase the number of it's occurences.
 		if((ocIter = Occurences.find((*buffer)[i])) == Occurences.end()) Occurences[(*buffer)[i]] = 1;
 		else Occurences[(*buffer)[i]]++;
@@ -31,7 +31,7 @@ void ArithmeticCoder::AssignOccurrences() {
 
 
 void ArithmeticCoder::AssignProbabilities() {
-	// For every pixel value in buffer:
+	// For every pixel's component value in buffer:
 	for(int i=0 ; i<(*buffer).size() ; ++i) {
 		Probabilities[(*buffer)[i]] = static_cast<double>(Occurences[(*buffer)[i]])/(*buffer).size();
 	}
