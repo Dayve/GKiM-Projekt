@@ -11,4 +11,8 @@
      + 1 przejście na odcienie szarości
  * **Dekodowanie do .bmp**
 
+ **Przydział pracy:**
+   + Kodowanie arytmetyczne: kodowanie: Dawid, dekodowanie: Bartek
+   + Kodowanie Byterun: kodowanie: Paweł, dekodowanie: Tomek
+
 Więcej informacji: [Wiki do projektu](https://github.com/Dayve/GKiM-Projekt/wiki)
