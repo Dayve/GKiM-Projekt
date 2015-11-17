@@ -5,7 +5,7 @@
 using namespace std;
 
 ImageWrapper::ImageWrapper() :
-	loadedFlag(false)
+	loadedFlag(false), AC(&buffer)
 {}
 
 
@@ -24,12 +24,10 @@ void ImageWrapper::Load(const string& filename) {
 void ImageWrapper::ExportFile(bool codingType, bool grayscale, const string& dataDir) {
 	if(!loadedFlag) return;
 
-//	TODO: Coding and grayscale
-
-	string fullPath = dataDir + "output.file";
+	string fullPath = dataDir + "output.file";	// Concatenate strings to obtain path to file
 	ofstream outputFile(fullPath.c_str(), ios::binary | ios::out);
 
-//	Fetching from img (sf::Image -> sf::Uint8) to buffer (std::vector<sf::Uint8>):
+	// Fetching from img (sf::Image -> sf::Uint8) to buffer (std::vector<sf::Uint8>):
 	for(unsigned int yy=0 ; yy<img.getSize().y ; ++yy) {
 		for(unsigned int xx=0 ; xx<img.getSize().x ; ++xx) {
 			buffer.push_back(img.getPixel(xx, yy).r);
@@ -38,8 +36,10 @@ void ImageWrapper::ExportFile(bool codingType, bool grayscale, const string& dat
 		}
 	}
 
-//	Writing from buffer (std::vector<sf::Uint8>) to outputFile (std::ofstream):
-	void* bufferFront = &buffer[0];
+	AC.Encode();
+
+	// Writing from buffer (std::vector<sf::Uint8>) to outputFile (std::ofstream):
+	void* bufferFront = &buffer[0];		// Put pointer at the beginning of the buffer memory
 	outputFile.write(static_cast<char*>(bufferFront), buffer.size());
 
 	outputFile.close();

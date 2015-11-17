@@ -4,11 +4,15 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 
+#include "../ArithmeticCoder/ArithmeticCoder.hpp"
+
 class ImageWrapper {
 	private:
 		sf::Image img;
 		bool loadedFlag;
 		std::vector<sf::Uint8> buffer;
+
+		ArithmeticCoder AC;
 
 	public:
 		ImageWrapper();
