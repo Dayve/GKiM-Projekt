@@ -24,8 +24,8 @@ void ArithmeticCoder::AssignOccurrences() {
 	for(int i=0 ; i<(*buffer).size() ; ++i) {
 		// If a pixel's component value is has not yet occured (as we iterate through buffer) add it to map.
 		// Else, increase the number of it's occurences.
-		if((ocIter = Occurences.find((*buffer)[i])) == Occurences.end()) Occurences[(*buffer)[i]] = 1;
-		else Occurences[(*buffer)[i]]++;
+		if((ocIter = Occurrences.find((*buffer)[i])) == Occurrences.end()) Occurrences[(*buffer)[i]] = 1;
+		else Occurrences[(*buffer)[i]]++;
 	}
 }
 
@@ -33,7 +33,7 @@ void ArithmeticCoder::AssignOccurrences() {
 void ArithmeticCoder::AssignProbabilities() {
 	// For every pixel's component value in buffer:
 	for(int i=0 ; i<(*buffer).size() ; ++i) {
-		Probabilities[(*buffer)[i]] = static_cast<double>(Occurences[(*buffer)[i]])/(*buffer).size();
+		Probabilities[(*buffer)[i]] = static_cast<double>(Occurrences[(*buffer)[i]])/(*buffer).size();
 	}
 }
 
