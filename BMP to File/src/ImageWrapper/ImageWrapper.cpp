@@ -37,8 +37,7 @@ void ImageWrapper::ExportFile(bool codingType, bool grayscale, const string& dat
 		}
 	}
 
-	// fileBuffer is a buffer for writing into a file, revBuffer is only for holding the reversed version of 5ths of bits
-	vector<bool> bitBuffer;		
+	vector<bool> bitBuffer;		// Holds results of converting values (scaled down to fit in 5 bits) from decimal to binary
 
 	for(int i=0 ; i<buffer.size() ; ++i) {
 		sf::Uint8 scaledVal = (buffer[i] * (pow(2, NR_BITS)-1))/255;		// Scale down to 5 bits in temporary variable
@@ -52,7 +51,7 @@ void ImageWrapper::ExportFile(bool codingType, bool grayscale, const string& dat
 	}
 
 	// -------------------------------------------------------- BIT BUFFER:
-	cout << "revBuffer before: ";
+	cout << "bitBuffer before: ";
 	for(int i=0 ; i<bitBuffer.size() ; ++i) {
 		cout << bitBuffer[i];
 		if((i+1) % NR_BITS == 0) cout << " ";
@@ -66,7 +65,7 @@ void ImageWrapper::ExportFile(bool codingType, bool grayscale, const string& dat
 	}
 
 	// -------------------------------------------------------- BIT BUFFER:
-	cout << "revBuffer after:  ";
+	cout << "bitBuffer after:  ";
 	for(int i=0 ; i<bitBuffer.size() ; ++i) {
 		cout << bitBuffer[i];
 		if((i+1) % NR_BITS == 0) cout << " ";
