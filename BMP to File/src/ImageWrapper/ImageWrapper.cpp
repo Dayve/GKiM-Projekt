@@ -72,14 +72,24 @@ void ImageWrapper::ExportFile(bool codingType, bool grayscale, const string& dat
 	}
 	cout << endl;
 	
-	/* TODO:
-	 * We have all the bits in vector<bool> bitBuffer. That's good, because we will need them anyway.
-	 * Even if we will use structure, containing 5 bytes (5, because it's 8*5 bits), we will have to put every single
-	 * bit in it, so here's why bitBuffer is not totally useless.
-	 */
+	block one;	// Test block
 
+	for(int i=0 ; i<bitBuffer.size() ; ++i) {
+		if(bitBuffer[i]) one.setBit(i);
+	}
+
+	/*
 	void* bufferFront = &buffer[0];		// Put pointer at the beginning of the buffer memory
 	outputFile.write(static_cast<char*>(bufferFront), buffer.size());
+	*/
+
+	void* bufferFront = one.getBytesAddr();
+	outputFile.write(static_cast<char*>(bufferFront), NR_BITS);
+	
+	// FIXME:
+	// Output:
+	// outputFile:   1000010000101000000100100001100100000000  
+	// bitBuffer:  001000010001010001001000100110 
 
 	outputFile.close();
 }
