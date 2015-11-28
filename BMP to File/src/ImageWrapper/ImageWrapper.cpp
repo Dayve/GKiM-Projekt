@@ -50,6 +50,8 @@ void ImageWrapper::ExportFile(bool codingType, bool grayscale, const string& dat
 		}
 	}
 
+
+	// ########## Printing out:
 	// -------------------------------------------------------- BIT BUFFER:
 	cout << "bitBuffer before: ";
 	for(int i=0 ; i<bitBuffer.size() ; ++i) {
@@ -71,6 +73,8 @@ void ImageWrapper::ExportFile(bool codingType, bool grayscale, const string& dat
 		if((i+1) % NR_BITS == 0) cout << " ";
 	}
 	cout << endl;
+	// ##########
+
 	
 	block one;	// Test block
 
@@ -78,19 +82,52 @@ void ImageWrapper::ExportFile(bool codingType, bool grayscale, const string& dat
 		if(bitBuffer[i]) one.setBit(i);
 	}
 
-	/*
-	void* bufferFront = &buffer[0];		// Put pointer at the beginning of the buffer memory
-	outputFile.write(static_cast<char*>(bufferFront), buffer.size());
-	*/
-
 	void* bufferFront = one.getBytesAddr();
 	outputFile.write(static_cast<char*>(bufferFront), NR_BITS);
-	
-	// FIXME:
-	// Output:
-	// outputFile:   1000010000101000000100100001100100000000  
-	// bitBuffer:  001000010001010001001000100110 
 
 	outputFile.close();
+
+//	=================================================== Print out generated binary file:
+//	(code from gist bfr, of course can be removed)
+
+	ifstream file ("../data/output.file", ios::in | ios::binary | ios::ate);
+	streampos fileSize;
+	char* bytes;
+
+	if (file.is_open()) {
+		fileSize = file.tellg();
+		bytes = new char [fileSize];
+		file.seekg (0, ios::beg); 
+		file.read(bytes, fileSize);
+		file.close();
+
+		cout << "Size: " << fileSize <<" bytes:" << endl;
+
+		for(int i=0 ; i<fileSize ; ++i) {
+			bitset<8> set(bytes[i]);
+			cout << set << " ";
+		}
+		cout << endl;	
+
+		cout << "In groups of 5 bits:" << endl;
+
+		vector<bool> bits;
+		for(int i=0 ; i<fileSize ; ++i) {
+			bitset<8> set(bytes[i]);
+			for(int j=0 ; j<8 ; ++j) {
+				bits.push_back(set[7-j]);
+			}
+		}
+		for(int i=0 ; i<bits.size() ; ++i) {
+			cout << bits[i];
+			if((i+1) % NR_BITS == 0) cout << " ";
+		}
+		cout << endl;	
+
+		delete[] bytes;
+	}
+	else cout << "Unable to open file" << endl;
+
+//	===================================================
 }
 

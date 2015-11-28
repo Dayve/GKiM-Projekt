@@ -31,19 +31,19 @@ struct block {
 
 	block() : bytes{0} {}
 
-	void setBit(int whichBit) {		// whichBit can range from 0 to 39
+	void setBit(int whichBit) {
+		if(whichBit > 39) return;			// whichBit can range from 0 to 39
+
 		int posInByte = whichBit % 8;
-		//int posIn5 = whichBit % ImageWrapper::NR_BITS;
 		int whichByte = whichBit / 8;
-		//int which5 = whichBit / ImageWrapper::NR_BITS;
 
-		uint8_t temp = pow(2, posInByte);	// Set 1 at offset position in temp byte
+		uint8_t temp = pow(2, 7-posInByte);	// Set 1 at (7-posInByte)th position in temp byte
 
-		bytes[whichByte] |= temp;		// "and-ing" temp byte and corresponding byte from array
+		bytes[whichByte] |= temp;			// "or" together temp byte and corresponding byte from array
 	}
 
 	void* getBytesAddr() {
-		return bytes;
+		return &bytes[0];
 	}
 };
 
