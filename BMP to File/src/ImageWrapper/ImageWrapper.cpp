@@ -75,42 +75,60 @@ void ImageWrapper::ExportFile(bool codingType, bool grayscale, const string& dat
 	cout << endl;
 	// ##########
 
-	
-	block one;	// Test block
 
-	for(int i=0 ; i<bitBuffer.size() ; ++i) {
-		if(bitBuffer[i]) one.setBit(i);
+	vector<block> blocks = { block() };
+
+	for(int i=0, j=0, blockIndex=0 ; i<bitBuffer.size() ; ++i, ++j) {
+		if(j>39) {
+			j-=40;
+			blocks.push_back(block());
+			blockIndex++;
+		}
+		if(bitBuffer[i]) blocks[blockIndex].setBit(j);
 	}
 
-	void* bufferFront = one.getBytesAddr();
-	outputFile.write(static_cast<char*>(bufferFront), NR_BITS);
+	// Writing binary file header (number of blocks inside, on 4 bytes):
+	uint32_t header = blocks.size();
+	outputFile.write(reinterpret_cast<const char*>(&header), sizeof(header));
+
+	// Writing blocks (5 bytes each, hence the second parameter is "blocks.size()*NR_BITS"):
+	void* bufferFront = blocks[0].getBytesAddr();
+	outputFile.write(static_cast<const char*>(bufferFront), blocks.size()*NR_BITS);
 
 	outputFile.close();
 
 //	=================================================== Print out generated binary file:
 //	(code from gist bfr, of course can be removed)
 
+	cout << endl << "Output from 'output.file' in form: [header | body]\n";
+
 	ifstream file ("../data/output.file", ios::in | ios::binary | ios::ate);
 	streampos fileSize;
 	char* bytes;
 
 	if (file.is_open()) {
+		// --------------------------------- Loading from "file" to "bytes":
 		fileSize = file.tellg();
 		bytes = new char [fileSize];
 		file.seekg (0, ios::beg); 
 		file.read(bytes, fileSize);
 		file.close();
 
+		// --------------------------------- Printing out in bytes:
 		cout << "Size: " << fileSize <<" bytes:" << endl;
 
 		for(int i=0 ; i<fileSize ; ++i) {
 			bitset<8> set(bytes[i]);
 			cout << set << " ";
+
+			if(i==3) cout << " |  ";
 		}
 		cout << endl;	
 
+		// --------------------------------- Printing out in fives:
 		cout << "In groups of 5 bits:" << endl;
 
+		// We put bits in vector<bool>:
 		vector<bool> bits;
 		for(int i=0 ; i<fileSize ; ++i) {
 			bitset<8> set(bytes[i]);
@@ -118,9 +136,19 @@ void ImageWrapper::ExportFile(bool codingType, bool grayscale, const string& dat
 				bits.push_back(set[7-j]);
 			}
 		}
-		for(int i=0 ; i<bits.size() ; ++i) {
+
+		// Print out header:
+		for(int i=0 ; i<4 /*header size*/; ++i) {
+			bitset<8> set(bytes[i]);
+			cout << set << " ";
+
+			if(i==3) cout << " |  ";
+		}
+
+		// And the body of a file:
+		for(int i=32 ; i<bits.size() ; ++i) {
 			cout << bits[i];
-			if((i+1) % NR_BITS == 0) cout << " ";
+			if((i+32+2) % 5 /*NR_BITS*/ == 0) cout << " ";
 		}
 		cout << endl;	
 
