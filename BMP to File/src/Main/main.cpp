@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstdlib>
 #include "../ImageWrapper/ImageWrapper.hpp"
 
 using namespace std; 
@@ -17,8 +18,8 @@ int main(int argc, char* argv[]) {
 	}
 	else {
 		filename = argv[1];
-		codingType = argv[2];
-		grayscale = argv[3];
+		codingType = atoi(argv[2]);
+		grayscale = atoi(argv[3]);
 
 		ImgObj.Load(dataPath + filename);
 		ImgObj.ExportFile(codingType, grayscale, dataPath);

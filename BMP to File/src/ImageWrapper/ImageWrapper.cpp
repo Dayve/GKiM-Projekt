@@ -51,7 +51,7 @@ void ImageWrapper::ExportFile(bool codingType, bool grayscale, const string& dat
 	}
 
 
-	// ########## Printing out:
+	// ########## Printing out: [DEBUG ONLY]
 	// -------------------------------------------------------- BIT BUFFER:
 	cout << "bitBuffer before: ";
 	for(int i=0 ; i<bitBuffer.size() ; ++i) {
@@ -87,9 +87,22 @@ void ImageWrapper::ExportFile(bool codingType, bool grayscale, const string& dat
 		if(bitBuffer[i]) blocks[blockIndex].setBit(j);
 	}
 
-	// Writing binary file header (number of blocks inside, on 4 bytes):
+	// Writing binary file header (number of blocks, codingType and grayscale, on 4 bytes):
+	/* -------------------------------------------
+		0-1 FOR CODING TYPE: (on MBS)
+		   0 Arithmetic Coding
+		   1 Byterun
+	   0-1 FOR GRAYSCALE: (on 2nd MSB)
+		   0 Keep colour values
+		   1 Change to grayscale
+	   ------------------------------------------- */
 	uint32_t header = blocks.size();
+
+	if(codingType) header += pow(2, 31);	// Mark option on most significant bit
+	if(grayscale) header += pow(2, 30);		// Mark option on second most significant bit
+
 	outputFile.write(reinterpret_cast<const char*>(&header), sizeof(header));
+
 
 	// Writing blocks (5 bytes each, hence the second parameter is "blocks.size()*NR_BITS"):
 	void* bufferFront = blocks[0].getBytesAddr();
@@ -97,7 +110,7 @@ void ImageWrapper::ExportFile(bool codingType, bool grayscale, const string& dat
 
 	outputFile.close();
 
-//	=================================================== Print out generated binary file:
+//	=================================================== Print out generated binary file: [DEBUG ONLY]
 //	(code from gist bfr, of course can be removed)
 
 	cout << endl << "Output from 'output.file' in form: [header | body]\n";
