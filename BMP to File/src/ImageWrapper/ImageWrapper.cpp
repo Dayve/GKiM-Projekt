@@ -55,8 +55,9 @@ void ImageWrapper::ExportFile(bool codingType, bool grayscale, const string& dat
 		for(int i=0 ; i<buffer.size() ; ++i) {
 			sf::Uint8 scaledVal = (buffer[i] * (pow(2, NR_BITS)-1))/255;		// Scale down to 5 bits in temporary variable
 
-			// Printing out: [DEBUG ONLY]
+			// ########## Printing out: [DEBUG ONLY]
 			cout << "Before: " << static_cast<unsigned short>(buffer[i]) << " -> After: " << static_cast<unsigned short>(scaledVal) << endl;
+			// ##########
 
 			for(int w=0 ; w<NR_BITS ; ++w) {
 				bitBuffer.push_back(scaledVal % 2);
@@ -74,6 +75,8 @@ void ImageWrapper::ExportFile(bool codingType, bool grayscale, const string& dat
 		if((i+1) % NR_BITS == 0) cout << " ";
 	}
 	cout << endl;
+	// ##########
+
 
 	// Every NR_BITS bits in bitBuffer are in reverse order, so we fix that:
 	for(int i=0 ; i<bitBuffer.size()/NR_BITS ; ++i) {
@@ -81,6 +84,8 @@ void ImageWrapper::ExportFile(bool codingType, bool grayscale, const string& dat
 		for(int j=0 ; j<NR_BITS/2 ; ++j) swap(bitBuffer[j + i*NR_BITS], bitBuffer[NR_BITS-1-j + i*NR_BITS]);
 	}
 
+
+	// ########## Printing out: [DEBUG ONLY]
 	// -------------------------------------------------------- BIT BUFFER:
 	cout << "bitBuffer after:  ";
 	for(int i=0 ; i<bitBuffer.size() ; ++i) {
@@ -102,7 +107,7 @@ void ImageWrapper::ExportFile(bool codingType, bool grayscale, const string& dat
 		if(bitBuffer[i]) blocks[blockIndex].setBit(j);
 	}
 
-	// Writing binary file header (number of blocks, codingType and grayscale, on 4 bytes):
+	// Writing binary file header (coding type, image width (px), grayscale, image height (px) on 4 bytes):
 	/*	-------------------------------------------
 		0-1 FOR CODING TYPE: (on MBS of imgW)
 		   0 Arithmetic Coding
@@ -127,6 +132,8 @@ void ImageWrapper::ExportFile(bool codingType, bool grayscale, const string& dat
 	outputFile.write(static_cast<const char*>(bufferFront), blocks.size()*NR_BITS);
 
 	outputFile.close();
+
+	// TODO: We may consider creating a class for binary file, for use in both parts of the project
 
 //	=================================================== Print out generated binary file: [DEBUG ONLY]
 //	(code from gist bfr, of course can be removed)
