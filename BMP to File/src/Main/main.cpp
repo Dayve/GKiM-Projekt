@@ -17,7 +17,7 @@ int main(int argc, char* argv[]) {
 		cout << "Usage: "<<argv[0]<<" filename 0/1(coding type) 0/1(grayscale)\n";
 	}
 	else {
-		filename = argv[1];
+		filename = argv[1]; 		// TODO: Check if some function like createFromCstr() should be used here
 		codingType = atoi(argv[2]);
 		grayscale = atoi(argv[3]);
 

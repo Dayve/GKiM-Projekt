@@ -39,14 +39,29 @@ void ImageWrapper::ExportFile(bool codingType, bool grayscale, const string& dat
 
 	vector<bool> bitBuffer;		// Holds results of converting values (scaled down to fit in 5 bits) from decimal to binary
 
-	for(int i=0 ; i<buffer.size() ; ++i) {
-		sf::Uint8 scaledVal = (buffer[i] * (pow(2, NR_BITS)-1))/255;		// Scale down to 5 bits in temporary variable
+	// We put for loops inside if blocks and not the other way around, because this way we check condidion only once:
+	if(grayscale) {
+		for(int i=0 ; i<buffer.size() ; i += 3) {
+			sf::Uint8 avgColor = (buffer[i] + buffer[i+1] + buffer[i+2])/3;	// Calculate the grayscale equivalent of given color
+			sf::Uint8 scaledVal = (avgColor * (pow(2, NR_BITS)-1))/255;		// Scale down to 5 bits in temporary variable
 
-		cout << "Before: " << static_cast<unsigned short>(buffer[i]) << " -> After: " << static_cast<unsigned short>(scaledVal) << endl;
+			for(int w=0 ; w<NR_BITS ; ++w) {
+				bitBuffer.push_back(scaledVal % 2);
+				scaledVal /= 2;
+			}
+		}
+	}
+	else {
+		for(int i=0 ; i<buffer.size() ; ++i) {
+			sf::Uint8 scaledVal = (buffer[i] * (pow(2, NR_BITS)-1))/255;		// Scale down to 5 bits in temporary variable
 
-		for(int w=0 ; w<NR_BITS ; ++w) {
-			bitBuffer.push_back(scaledVal % 2);
-			scaledVal /= 2;
+			// Printing out: [DEBUG ONLY]
+			cout << "Before: " << static_cast<unsigned short>(buffer[i]) << " -> After: " << static_cast<unsigned short>(scaledVal) << endl;
+
+			for(int w=0 ; w<NR_BITS ; ++w) {
+				bitBuffer.push_back(scaledVal % 2);
+				scaledVal /= 2;
+			}
 		}
 	}
 
@@ -88,20 +103,23 @@ void ImageWrapper::ExportFile(bool codingType, bool grayscale, const string& dat
 	}
 
 	// Writing binary file header (number of blocks, codingType and grayscale, on 4 bytes):
-	/* -------------------------------------------
-		0-1 FOR CODING TYPE: (on MBS)
+	/*	-------------------------------------------
+		0-1 FOR CODING TYPE: (on MBS of imgW)
 		   0 Arithmetic Coding
 		   1 Byterun
-	   0-1 FOR GRAYSCALE: (on 2nd MSB)
+		0-1 FOR GRAYSCALE: (on MSB of imgH) 
 		   0 Keep colour values
 		   1 Change to grayscale
-	   ------------------------------------------- */
-	uint32_t header = blocks.size();
 
-	if(codingType) header += pow(2, 31);	// Mark option on most significant bit
-	if(grayscale) header += pow(2, 30);		// Mark option on second most significant bit
+		We can later deduce the number of blocks from width and height.
+		------------------------------------------- */
+	uint16_t imgW = img.getSize().x, imgH = img.getSize().y;
 
-	outputFile.write(reinterpret_cast<const char*>(&header), sizeof(header));
+	if(codingType) imgW += pow(2, 15);
+	if(grayscale) imgH += pow(2, 15);
+
+	outputFile.write(reinterpret_cast<const char*>(&imgW), sizeof(imgW));
+	outputFile.write(reinterpret_cast<const char*>(&imgH), sizeof(imgH));
 
 
 	// Writing blocks (5 bytes each, hence the second parameter is "blocks.size()*NR_BITS"):

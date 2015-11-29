@@ -1,13 +1,25 @@
 #include <iostream>
-#include <SFML/Graphics.hpp>
+#include "../FileWrapper/FileWrapper.hpp"
 
-#include "../Class2/class2.hpp"
-
-using namespace std;
+using namespace std; 
 
 int main(int argc, char* argv[]) {
-  Class2 obj;
-  obj.fun();
+/*	
+ *	dataPath could be configured to be set in CMakeLists.txt, possibly files could be shared 
+ *	between subprojects for testing purposes (requires some changes in project tree)
+ */
+	string filename, dataPath = "../data/"; 
+	//FileWrapper FileObj;
 
-  return 0;
+	if(argc != 4) {
+		cout << "Usage: "<<argv[0]<<" filename\n";
+	}
+	else {
+		filename = argv[1]; 		// TODO: Check if some function like createFromCstr() should be used here
+
+		//FileObj.Load(dataPath + filename);
+		//FileObj.ExportBMP(dataPath);
+	}
+
+	return 0;
 }
