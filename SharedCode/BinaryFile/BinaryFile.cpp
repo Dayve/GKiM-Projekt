@@ -72,8 +72,8 @@ void BinaryFile::ExportFromImg(sf::Image& image, bool codingType, bool grayscale
 
 	// Here we put bits from bitBuffer into blocks of 40 bits (5*8 bytes):
 	for(int i=0, j=0, blockIndex=0 ; i<bitBuffer.size() ; ++i, ++j) {
-		if(j > Block::NR_BITS-1) {
-			j-=Block::NR_BITS;
+		if(j > (Block::NR_BITS*8)-1) {
+			j -= Block::NR_BITS*8;
 			blocks.push_back(Block());
 			blockIndex++;
 		}
@@ -98,8 +98,8 @@ void BinaryFile::ExportFromImg(sf::Image& image, bool codingType, bool grayscale
 	uint16_t imgW = image.getSize().x;
 	uint16_t imgH = image.getSize().y;
 
-	if(codingType) imgW += pow(2, 15);
-	if(grayscale) imgH += pow(2, 15);
+	if(codingType) imgW += pow(2, 15);		// Could be imgW |= 0b1000000000000000
+	if(grayscale) imgH += pow(2, 15);		// Could be imgH |= 0b1000000000000000
 
 	// Writin header:
 	outputFile.write(reinterpret_cast<const char*>(&imgW), sizeof(imgW));
@@ -114,6 +114,40 @@ void BinaryFile::ExportFromImg(sf::Image& image, bool codingType, bool grayscale
 	// Check result: [DEBUG ONLY]
 	PrintOutFile();
 }
+
+
+
+void BinaryFile::Load(const std::string& fullPath) {
+	ifstream inputFile(fullPath.c_str(), ios::binary | ios::in);
+
+	uint16_t imgW, imgH;
+	bool codingType, grayscale;
+
+	// Read header:
+	inputFile.read(reinterpret_cast<char*>(&imgW), sizeof(imgW));
+	inputFile.read(reinterpret_cast<char*>(&imgH), sizeof(imgH));
+
+	// Check MSBs:
+	if(imgW > pow(2, 15)) {
+		codingType = true;
+		imgW -= pow(2, 15);
+	}
+	if(imgH > pow(2, 15)) {
+		grayscale = true;
+		imgH -= pow(2, 15);
+	}
+
+	// Calculate number of blocks:
+	// (If values don't fit exactly in some amount of blocks add one to the amount they take, otherwise, get this amount)
+	int numBlocks = ((imgW*imgH*3 * 5) % 40) ? ((imgW*imgH*3 * 5) / 40)+1 : ((imgW*imgH*3 * 5) / 40);
+
+	// TODO:
+	// - read values to blocks (std::vector)
+	// - write code of Block::getBit
+	// - use Block::getBit to translate binary values and put them into values (std::vector)
+	// - use sf::Image::create and sf::Image::saveToFile to export BMP
+}
+
 
 
 void BinaryFile::PrintOutFile() {
@@ -172,11 +206,6 @@ void BinaryFile::PrintOutFile() {
 		delete[] bytes;
 	}
 	else cout << "Unable to open file" << endl;
-}
-
-
-void BinaryFile::Load(const std::string& fullPath) {
-	// TODO
 }
 
 

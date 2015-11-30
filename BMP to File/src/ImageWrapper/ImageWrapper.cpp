@@ -12,8 +12,8 @@ ImageWrapper::ImageWrapper() :
 
 
 void ImageWrapper::Load(const string& fullPath) {
-	if(img.loadFromFile(filename)) {
-		cout << filename <<" loaded\n";
+	if(img.loadFromFile(fullPath)) {
+		cout << fullPath <<" loaded\n";
 		loadedFlag = true;
 	}
 	else cout << "Error while loading image.\n";
