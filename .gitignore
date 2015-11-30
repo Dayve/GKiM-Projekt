@@ -1,4 +1,5 @@
 # Folders with local/generated files:
 **/bin
 **/data
+*.vim
 
