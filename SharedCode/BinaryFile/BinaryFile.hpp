@@ -14,7 +14,7 @@ class BinaryFile {
 		~BinaryFile() {}
 
 		void ExportFromImg(sf::Image& image, bool codingType, bool grayscale, const std::string& dataDir);
-		void Load(const std::string& fullPath);
+		void ImportFromFile(const std::string& fullPath);
 
 		void PrintOutFile();	// [DEBUG ONLY]
 

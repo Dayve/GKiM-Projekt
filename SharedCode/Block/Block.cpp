@@ -1,5 +1,8 @@
 #include "Block.hpp"
 #include <cmath>
+#include <bitset>
+#include <iostream>
+using namespace std;
 
 void Block::setBit(int whichBit) {
 	if(whichBit > 39) return;			// whichBit can range from 0 to 39
@@ -14,8 +17,13 @@ void Block::setBit(int whichBit) {
 
 
 bool Block::getBit(int whichBit) {
-	// TODO
-	return false;
+	bitset<8> setFromBytes[NR_BITS];
+	for(int a=0 ; a<NR_BITS ; ++a) setFromBytes[a] = bytes[a];
+
+	int posInByte = whichBit % 8;
+	int whichByte = whichBit / 8;
+
+	return setFromBytes[whichByte][posInByte];	// TODO: MAKE SURE IT'S CORRECT TO USE [][]
 }
 
 

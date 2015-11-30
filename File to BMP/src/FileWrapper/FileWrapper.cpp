@@ -7,7 +7,7 @@ FileWrapper::FileWrapper() :
 
 
 void FileWrapper::Load(const string& fullPath) {
-	inputFile.Load(fullPath);
+	inputFile.ImportFromFile(fullPath);
 }
 
 

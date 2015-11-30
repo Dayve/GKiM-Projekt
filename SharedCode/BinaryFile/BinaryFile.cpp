@@ -117,7 +117,7 @@ void BinaryFile::ExportFromImg(sf::Image& image, bool codingType, bool grayscale
 
 
 
-void BinaryFile::Load(const std::string& fullPath) {
+void BinaryFile::ImportFromFile(const std::string& fullPath) {
 	ifstream inputFile(fullPath.c_str(), ios::binary | ios::in);
 
 	uint16_t imgW, imgH;
@@ -141,11 +141,25 @@ void BinaryFile::Load(const std::string& fullPath) {
 	// (If values don't fit exactly in some amount of blocks add one to the amount they take, otherwise, get this amount)
 	int numBlocks = ((imgW*imgH*3 * 5) % 40) ? ((imgW*imgH*3 * 5) / 40)+1 : ((imgW*imgH*3 * 5) / 40);
 
+	for(int w=0 ; w<numBlocks ; ++w) {
+		inputFile.read(reinterpret_cast<char*>(&blocks[w]), Block::NR_BITS);	// We read one block (NR_BITS, that is 5 bytes) at the time 
+		blocks.push_back(Block());
+	}
+
+	for(int i=0 ; i<blocks.size() ; ++i) {
+		for(int j=0 ; j<Block::NR_BITS*8 ; ++j) {
+			cout << blocks[i].getBit(j);
+			if((j+1) % 8 == 0) cout << " ";
+		}
+	}
+	cout << endl;
+
 	// TODO:
-	// - read values to blocks (std::vector)
-	// - write code of Block::getBit
-	// - use Block::getBit to translate binary values and put them into values (std::vector)
-	// - use sf::Image::create and sf::Image::saveToFile to export BMP
+	// - [x] read values to blocks (std::vector)
+	// - [x] write code of Block::getBit
+	// - [ ] fix order bugs (important)
+	// - [ ] use Block::getBit to translate binary values and put them into values (std::vector)
+	// - [ ] use sf::Image::create and sf::Image::saveToFile to export BMP
 }
 
 
