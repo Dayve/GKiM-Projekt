@@ -5,6 +5,8 @@
 
 class FileWrapper {
 	public:
+		void Load(const std::string& filename);
+		void ExportBMP(const std::string& dataDir);
 
 };
 

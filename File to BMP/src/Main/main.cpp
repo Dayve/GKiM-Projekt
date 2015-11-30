@@ -9,16 +9,16 @@ int main(int argc, char* argv[]) {
  *	between subprojects for testing purposes (requires some changes in project tree)
  */
 	string filename, dataPath = "../data/"; 
-	//FileWrapper FileObj;
+	FileWrapper FileObj;
 
-	if(argc != 4) {
+	if(argc != 2) {
 		cout << "Usage: "<<argv[0]<<" filename\n";
 	}
 	else {
-		filename = argv[1]; 		// TODO: Check if some function like createFromCstr() should be used here
+		filename = argv[1];
 
-		//FileObj.Load(dataPath + filename);
-		//FileObj.ExportBMP(dataPath);
+		FileObj.Load(dataPath + filename);
+		FileObj.ExportBMP(dataPath);
 	}
 
 	return 0;
