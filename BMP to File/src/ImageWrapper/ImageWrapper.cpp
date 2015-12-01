@@ -10,7 +10,6 @@ ImageWrapper::ImageWrapper() :
 	loadedFlag(false)
 {}
 
-
 void ImageWrapper::Load(const string& fullPath) {
 	if(img.loadFromFile(fullPath)) {
 		cout << fullPath <<" loaded\n";
