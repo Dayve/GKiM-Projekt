@@ -120,8 +120,12 @@ bool BinaryFile::ImportFromFile(const std::string& fullPath) {
 	}
 
 	// Calculate number of blocks:
-	// (If values don't fit exactly in some amount of blocks add one to the amount they take, otherwise, get this amount)
-	int numBlocks = ((imgW*imgH*3 * 5) % 40) ? ((imgW*imgH*3 * 5) / 40)+1 : ((imgW*imgH*3 * 5) / 40);
+	int numBlocks, numValuesInFile;
+
+	if(grayscale) numValuesInFile = imgW*imgH;
+	else numValuesInFile = imgW*imgH * 3;
+
+	numBlocks = ((numValuesInFile * 5) % 40) ? ((numValuesInFile * 5) / 40)+1 : ((numValuesInFile * 5) / 40);
 
 	// Read bits one blockwise:
 	for(int w=0 ; w<numBlocks ; ++w) {
