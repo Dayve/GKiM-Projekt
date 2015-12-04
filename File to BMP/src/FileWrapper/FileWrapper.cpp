@@ -20,4 +20,6 @@ void FileWrapper::ExportBMP(const string& dataDir) {
 
 	resultImg.create(inputFile.imgW, inputFile.imgH, &inputFile.values[0]);
 	resultImg.saveToFile(dataDir + "result.bmp");
+
+	cout << "BMP exported (result.bmp)\n";
 }

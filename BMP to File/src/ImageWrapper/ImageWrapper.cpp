@@ -22,6 +22,8 @@ void ImageWrapper::Load(const string& fullPath) {
 
 void ImageWrapper::ExportFile(bool codingType, bool grayscale, const string& dataDir) {
 	if(!loadedFlag) return;
+
 	outputFile.ExportFromImg(img, codingType, grayscale, dataDir);
+	cout << "Binary file exported\n";
 }
 

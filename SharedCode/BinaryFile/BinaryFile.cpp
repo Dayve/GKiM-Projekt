@@ -21,7 +21,7 @@ void BinaryFile::ExportFromImg(sf::Image& image, bool codingType, bool grayscale
 	if(grayscale) {
 		for(int i=0 ; i<values.size() ; i += 3) {
 			sf::Uint8 avgColor = (values[i] + values[i+1] + values[i+2])/3;	// Calculate the grayscale equivalent of given color
-			sf::Uint8 scaledVal = (avgColor * (pow(2, Block::NR_BITS)-1))/255;		// Scale down to 5 bits in temporary variable
+			sf::Uint8 scaledVal = (avgColor * (pow(2.0, Block::NR_BITS)-1))/255.0;		// Scale down to 5 bits in temporary variable
 
 			for(int w=0 ; w<Block::NR_BITS ; ++w) {
 				bitBuffer.push_back(scaledVal % 2);
@@ -31,7 +31,7 @@ void BinaryFile::ExportFromImg(sf::Image& image, bool codingType, bool grayscale
 	}
 	else {
 		for(int i=0 ; i<values.size() ; ++i) {
-			sf::Uint8 scaledVal = (values[i] * (pow(2, Block::NR_BITS)-1))/255;		// Scale down to 5 bits in temporary variable
+			sf::Uint8 scaledVal = (values[i] * (pow(2.0, Block::NR_BITS)-1))/255.0;		// Scale down to 5 bits in temporary variable
 
 			for(int w=0 ; w<Block::NR_BITS ; ++w) {
 				bitBuffer.push_back(scaledVal % 2);
@@ -45,6 +45,7 @@ void BinaryFile::ExportFromImg(sf::Image& image, bool codingType, bool grayscale
 		// NR_BITS/2 will be rounded down for odd numbers, but this is fine, because the middle bit won't be swapped:
 		for(int j=0 ; j<Block::NR_BITS/2 ; ++j) swap(bitBuffer[j + i*Block::NR_BITS], bitBuffer[Block::NR_BITS-1-j + i*Block::NR_BITS]);
 	}
+
 
 	blocks.push_back(Block());	// There were no Blocks before in blocks vector, so we add the first one
 
@@ -90,14 +91,14 @@ void BinaryFile::ExportFromImg(sf::Image& image, bool codingType, bool grayscale
 	outputFile.close();
 
 	// Check result: [DEBUG ONLY]
-	PrintOutFile();
+	//PrintOutFile();
 }
 
 
 
 bool BinaryFile::ImportFromFile(const std::string& fullPath) {
 	// Check input: [DEBUG ONLY]
-	PrintOutFile();
+	//PrintOutFile();
 
 	ifstream inputFile(fullPath.c_str(), ios::binary | ios::in);
 	if(inputFile.fail()) return false;
@@ -134,27 +135,14 @@ bool BinaryFile::ImportFromFile(const std::string& fullPath) {
 		inputFile.read(reinterpret_cast<char*>(&blocks[w]), Block::NR_BITS);	// We read one block (NR_BITS, that is 5 bytes) at the time 
 	}
 
-
-	// ############################# Print out readed information: [DEBUG ONLY]
+	// ############################# Print out readed information:
 	cout << "\nDETECTED OPTIONS: -------------\n";
 	cout << " Grayscale: " << (grayscale ? "Yes" : "No") << endl;
 	cout << " Coding type: " << (codingType ? "Byterun" : "Arithmetic Coding") << endl;
 	cout << "-----------------------------\n";
-
-	cout << "\nReaded:\n";
-	for(int i=0 ; i<blocks.size() ; ++i) {			// For every block
-		for(int j=0 ; j<Block::NR_BITS ; ++j) {		// For every byte (there are 5 (Block::NR_BITS) bytes)
-			for(int k=0 ; k<8 ; ++k) { 				// For every bit
-				cout << blocks[i].getBit(j*8 + k);	
-			}
-			cout << " ";
-		}
-	}
-	cout << endl << endl;
 	// #############################
 
-
-	int readedValuesCounter = 0;	// Count how many values did we already read
+	int readedValuesCounter = 0, addedValuesCounter = 0;	// Count how many values did we already read (so that we don't read empty bits at the end) and add
 
 	for(int i=0 ; i<blocks.size() ; ++i) {			// For every block
 		for(int j=0 ; j<8 ; ++j) {					// For every five bits (there are 8 fives in every block)
@@ -166,13 +154,21 @@ bool BinaryFile::ImportFromFile(const std::string& fullPath) {
 				if(blocks[i].getBit(j*Block::NR_BITS + k)) valueFromBits += pow(2, Block::NR_BITS-1 - k);
 			}
 
-			int t=1;
-			if(grayscale) t=3;
-			for(int l=0 ; l<t ; ++l) values.push_back(valueFromBits);
-
-			values.push_back(255);	// Alpha component (used for exporting BMP)
-
+			unsigned short v = (valueFromBits*255.0)/31.0;
+			valueFromBits = v;
 			readedValuesCounter++;
+
+			int t = 1;
+			if(grayscale) t = 3;
+
+			for(int l=0 ; l<t ; ++l) {
+				values.push_back(valueFromBits);
+				addedValuesCounter++;
+			}
+
+			if((addedValuesCounter)%3 == 0) {
+				values.push_back(255);	// Alpha component (sf::Image::saveToFile needs that)
+			}
 		}
 	}
 
