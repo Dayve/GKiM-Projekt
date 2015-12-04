@@ -17,15 +17,17 @@ void Block::setBit(int whichBit) {
 
 
 bool Block::getBit(int whichBit) {
+	if(whichBit < 0 or whichBit > 39) return false;
+
 	bitset<8> setFromBytes[NR_BITS];
 	for(int a=0 ; a<NR_BITS ; ++a) setFromBytes[a] = bytes[a];
 
 	int posInByte = whichBit % 8;
 	int whichByte = whichBit / 8;
 
-	//return setFromBytes[whichByte][posInByte];	// FIXME: Correct?
+	//return setFromBytes[whichByte][7-posInByte];	// FIXME: Correct?
 	bitset<8> temp = setFromBytes[whichByte];
-	return temp[posInByte];
+	return temp[7-posInByte];
 }
 
 

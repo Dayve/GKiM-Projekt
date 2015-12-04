@@ -10,7 +10,7 @@
 
 class BinaryFile {
 	public:
-		BinaryFile() {}
+		BinaryFile() : imgW(0), imgH(0) {}
 		~BinaryFile() {}
 
 		void ExportFromImg(sf::Image& image, bool codingType, bool grayscale, const std::string& dataDir);
@@ -18,9 +18,11 @@ class BinaryFile {
 
 		void PrintOutFile();	// [DEBUG ONLY]
 
+		std::vector<sf::Uint8> values;
+		uint16_t imgW, imgH;
+
 	private:
 		std::vector<Block> blocks;
-		std::vector<sf::Uint8> values;
 };
 
 #endif

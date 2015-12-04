@@ -102,7 +102,6 @@ bool BinaryFile::ImportFromFile(const std::string& fullPath) {
 	ifstream inputFile(fullPath.c_str(), ios::binary | ios::in);
 	if(inputFile.fail()) return false;
 
-	uint16_t imgW, imgH;
 	bool codingType, grayscale;
 
 	// Read header:
@@ -125,7 +124,9 @@ bool BinaryFile::ImportFromFile(const std::string& fullPath) {
 	if(grayscale) numValuesInFile = imgW*imgH;
 	else numValuesInFile = imgW*imgH * 3;
 
-	numBlocks = ((numValuesInFile * 5) % 40) ? ((numValuesInFile * 5) / 40)+1 : ((numValuesInFile * 5) / 40);
+	numBlocks = ((numValuesInFile * Block::NR_BITS) % (Block::NR_BITS*8)) ? 
+		((numValuesInFile * Block::NR_BITS) / (Block::NR_BITS*8)) + 1 : 
+		((numValuesInFile * Block::NR_BITS) / (Block::NR_BITS*8));
 
 	// Read bits one blockwise:
 	for(int w=0 ; w<numBlocks ; ++w) {
@@ -133,25 +134,53 @@ bool BinaryFile::ImportFromFile(const std::string& fullPath) {
 		inputFile.read(reinterpret_cast<char*>(&blocks[w]), Block::NR_BITS);	// We read one block (NR_BITS, that is 5 bytes) at the time 
 	}
 
+
+	// ############################# Print out readed information: [DEBUG ONLY]
+	cout << "\nDETECTED OPTIONS: -------------\n";
+	cout << " Grayscale: " << (grayscale ? "Yes" : "No") << endl;
+	cout << " Coding type: " << (codingType ? "Byterun" : "Arithmetic Coding") << endl;
+	cout << "-----------------------------\n";
+
 	cout << "\nReaded:\n";
 	for(int i=0 ; i<blocks.size() ; ++i) {			// For every block
-		for(int j=0 ; j<Block::NR_BITS ; ++j) {		// For every byte
+		for(int j=0 ; j<Block::NR_BITS ; ++j) {		// For every byte (there are 5 (Block::NR_BITS) bytes)
 			for(int k=0 ; k<8 ; ++k) { 				// For every bit
-				cout << blocks[i].getBit(j*8 + 7-k);	
+				cout << blocks[i].getBit(j*8 + k);	
 			}
 			cout << " ";
 		}
 	}
 	cout << endl << endl;
+	// #############################
+
+
+	int readedValuesCounter = 0;	// Count how many values did we already read
+
+	for(int i=0 ; i<blocks.size() ; ++i) {			// For every block
+		for(int j=0 ; j<8 ; ++j) {					// For every five bits (there are 8 fives in every block)
+			if(readedValuesCounter == numValuesInFile) return true;
+
+			sf::Uint8 valueFromBits = 0;
+
+			for(int k=0 ; k<Block::NR_BITS ; ++k) { // For every bit
+				if(blocks[i].getBit(j*Block::NR_BITS + k)) valueFromBits += pow(2, Block::NR_BITS-1 - k);
+			}
+
+			int t=1;
+			if(grayscale) t=3;
+			for(int l=0 ; l<t ; ++l) values.push_back(valueFromBits);
+
+			values.push_back(255);	// Alpha component (used for exporting BMP)
+
+			readedValuesCounter++;
+		}
+	}
 
 	return true;
-
-	// TODO:
-	// - [ ] use Block::getBit to translate binary values and put them into "values" (std::vector)
 }
 
 
-
+// [DEBUG ONLY]
 void BinaryFile::PrintOutFile() {
 	cout << endl << "Output from 'output.file' in form: [header | body]\n";
 

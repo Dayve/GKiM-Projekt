@@ -18,6 +18,6 @@ void FileWrapper::Load(const string& fullPath) {
 void FileWrapper::ExportBMP(const string& dataDir) {
 	if(!loadedFlag) return;
 
-	// TODO:
-	// - [ ] use sf::Image::create and sf::Image::saveToFile to export BMP
+	resultImg.create(inputFile.imgW, inputFile.imgH, &inputFile.values[0]);
+	resultImg.saveToFile(dataDir + "result.bmp");
 }

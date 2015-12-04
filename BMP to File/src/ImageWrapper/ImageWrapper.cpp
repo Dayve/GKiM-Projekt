@@ -22,6 +22,6 @@ void ImageWrapper::Load(const string& fullPath) {
 
 void ImageWrapper::ExportFile(bool codingType, bool grayscale, const string& dataDir) {
 	if(!loadedFlag) return;
-	else outputFile.ExportFromImg(img, codingType, grayscale, dataDir);
+	outputFile.ExportFromImg(img, codingType, grayscale, dataDir);
 }
 
