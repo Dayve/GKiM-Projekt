@@ -17,8 +17,8 @@ class FileWrapper {
 		FileWrapper();
 		~FileWrapper() {}
 
-		void Load(const std::string& fullPath);
-		void ExportBMP(const std::string& dataDir);
+		void Load(const std::string& pathWname);
+		void ExportBMP();
 
 };
 

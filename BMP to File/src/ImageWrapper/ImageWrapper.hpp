@@ -19,8 +19,8 @@ class ImageWrapper {
 		ImageWrapper();
 		~ImageWrapper() {}
 
-		void Load(const std::string& fullPath);
-		void ExportFile(bool codingType, bool grayscale, const std::string& dataDir);
+		void Load(const std::string& pathWname);
+		void ExportFile(bool codingType, bool grayscale);
 };
 
 #endif

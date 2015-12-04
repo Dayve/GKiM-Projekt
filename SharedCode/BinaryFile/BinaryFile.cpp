@@ -4,7 +4,7 @@
 #include <bitset>
 using namespace std;
 
-void BinaryFile::ExportFromImg(sf::Image& image, bool codingType, bool grayscale, const string& dataDir) {
+void BinaryFile::ExportFromImg(sf::Image& image, bool codingType, bool grayscale) {
 	// Fetching from image (sf::Image -> sf::Uint8) to values (std::vector<sf::Uint8>):
 	for(unsigned int yy=0 ; yy<image.getSize().y ; ++yy) {
 		for(unsigned int xx=0 ; xx<image.getSize().x ; ++xx) {
@@ -71,8 +71,7 @@ void BinaryFile::ExportFromImg(sf::Image& image, bool codingType, bool grayscale
 		We can later deduce the number of blocks from width and height.
 		------------------------------------------- */
 
-	string fullPath = dataDir + "output.file";			// Concatenate strings to obtain path to file
-	ofstream outputFile(fullPath.c_str(), ios::binary | ios::out);
+	ofstream outputFile("../data/output.file", ios::binary | ios::out);
 
 	uint16_t imgW = image.getSize().x;
 	uint16_t imgH = image.getSize().y;
@@ -80,7 +79,7 @@ void BinaryFile::ExportFromImg(sf::Image& image, bool codingType, bool grayscale
 	if(codingType) imgW += pow(2, 15);		// Could be imgW |= 0b1000000000000000
 	if(grayscale) imgH += pow(2, 15);		// Could be imgH |= 0b1000000000000000
 
-	// Writin header:
+	// Writing header:
 	outputFile.write(reinterpret_cast<const char*>(&imgW), sizeof(imgW));
 	outputFile.write(reinterpret_cast<const char*>(&imgH), sizeof(imgH));
 
@@ -89,21 +88,15 @@ void BinaryFile::ExportFromImg(sf::Image& image, bool codingType, bool grayscale
 	outputFile.write(static_cast<const char*>(bufferFront), blocks.size()*Block::NR_BITS);
 
 	outputFile.close();
-
-	// Check result: [DEBUG ONLY]
-	//PrintOutFile();
 }
 
 
 
-bool BinaryFile::ImportFromFile(const std::string& fullPath) {
-	// Check input: [DEBUG ONLY]
-	//PrintOutFile();
-
-	ifstream inputFile(fullPath.c_str(), ios::binary | ios::in);
+bool BinaryFile::ImportFromFile(const std::string& pathWithName) {
+	ifstream inputFile(pathWithName.c_str(), ios::binary | ios::in);
 	if(inputFile.fail()) return false;
 
-	bool codingType, grayscale;
+	bool codingType = false, grayscale = false;
 
 	// Read header:
 	inputFile.read(reinterpret_cast<char*>(&imgW), sizeof(imgW));
@@ -119,7 +112,7 @@ bool BinaryFile::ImportFromFile(const std::string& fullPath) {
 		imgH -= pow(2, 15);
 	}
 
-	// Calculate number of blocks:
+	// Calculate number of values in file, then number of blocks:
 	int numBlocks, numValuesInFile;
 
 	if(grayscale) numValuesInFile = imgW*imgH;
@@ -135,14 +128,15 @@ bool BinaryFile::ImportFromFile(const std::string& fullPath) {
 		inputFile.read(reinterpret_cast<char*>(&blocks[w]), Block::NR_BITS);	// We read one block (NR_BITS, that is 5 bytes) at the time 
 	}
 
-	// ############################# Print out readed information:
-	cout << "\nDETECTED OPTIONS: -------------\n";
+	// Print out readed information:
+	cout << "DETECTED OPTIONS: -------------\n";
 	cout << " Grayscale: " << (grayscale ? "Yes" : "No") << endl;
 	cout << " Coding type: " << (codingType ? "Byterun" : "Arithmetic Coding") << endl;
 	cout << "-----------------------------\n";
-	// #############################
 
-	int readedValuesCounter = 0, addedValuesCounter = 0;	// Count how many values did we already read (so that we don't read empty bits at the end) and add
+	// For counting how many values did we already read (so that we don't read empty bits at the end) 
+	// and add (so that we know where to put alpha channel values):
+	int readedValuesCounter = 0, addedValuesCounter = 0;	
 
 	for(int i=0 ; i<blocks.size() ; ++i) {			// For every block
 		for(int j=0 ; j<8 ; ++j) {					// For every five bits (there are 8 fives in every block)
@@ -154,12 +148,11 @@ bool BinaryFile::ImportFromFile(const std::string& fullPath) {
 				if(blocks[i].getBit(j*Block::NR_BITS + k)) valueFromBits += pow(2, Block::NR_BITS-1 - k);
 			}
 
-			unsigned short v = (valueFromBits*255.0)/31.0;
-			valueFromBits = v;
+			valueFromBits = (valueFromBits*255.0)/31.0;
 			readedValuesCounter++;
 
 			int t = 1;
-			if(grayscale) t = 3;
+			if(grayscale) t = 3;	// If grayscale is set, we put there 3 identical values (one for each channel)
 
 			for(int l=0 ; l<t ; ++l) {
 				values.push_back(valueFromBits);
@@ -176,63 +169,18 @@ bool BinaryFile::ImportFromFile(const std::string& fullPath) {
 }
 
 
-// [DEBUG ONLY]
-void BinaryFile::PrintOutFile() {
-	cout << endl << "Output from 'output.file' in form: [header | body]\n";
+sf::Uint8* BinaryFile::getValuesAddress() {
+	return &values[0];
+}
 
-	ifstream file ("../data/output.file", ios::in | ios::binary | ios::ate);
-	streampos fileSize;
-	char* bytes;
 
-	if (file.is_open()) {
-		// --------------------------------- Loading from "file" to "bytes":
-		fileSize = file.tellg();
-		bytes = new char [fileSize];
-		file.seekg (0, ios::beg); 
-		file.read(bytes, fileSize);
-		file.close();
+unsigned BinaryFile::getW() {
+	return imgW;	// uint16_t => unsigned int
+}
 
-		// --------------------------------- Printing out in bytes:
-		cout << "Size: " << fileSize <<" bytes:" << endl;
 
-		for(int i=0 ; i<fileSize ; ++i) {
-			bitset<8> set(bytes[i]);
-			cout << set << " ";
-
-			if(i==3) cout << " |  ";
-		}
-		cout << endl;	
-
-		// --------------------------------- Printing out in fives:
-		cout << "In groups of 5 bits:" << endl;
-
-		// We put bits in vector<bool>:
-		vector<bool> bits;
-		for(int i=0 ; i<fileSize ; ++i) {
-			bitset<8> set(bytes[i]);
-			for(int j=0 ; j<8 ; ++j) {
-				bits.push_back(set[7-j]);
-			}
-		}
-
-		// Print out header:
-		for(int i=0 ; i<4 /*header size*/; ++i) {
-			bitset<8> set(bytes[i]);
-			cout << set << " ";
-
-			if(i==3) cout << " |  ";
-		}
-
-		// And the body of a file:
-		for(int i=32 ; i<bits.size() ; ++i) {
-			cout << bits[i];
-			if((i+32+2) % 5 /*Block::NR_BITS*/ == 0) cout << " ";
-		}
-		cout << endl;	
-
-		delete[] bytes;
-	}
-	else cout << "Unable to open file" << endl;
+unsigned BinaryFile::getH() {
+	return imgH;	// uint16_t => unsigned int
 }
 
 

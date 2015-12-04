@@ -5,7 +5,7 @@
 using namespace std;
 
 void Block::setBit(int whichBit) {
-	if(whichBit > 39) return;			// whichBit can range from 0 to 39
+	if(whichBit < 0 or whichBit > 39) return;	// whichBit can range from 0 to 39
 
 	int posInByte = whichBit % 8;
 	int whichByte = whichBit / 8;
@@ -17,7 +17,7 @@ void Block::setBit(int whichBit) {
 
 
 bool Block::getBit(int whichBit) {
-	if(whichBit < 0 or whichBit > 39) return false;
+	if(whichBit < 0 or whichBit > 39) return false; // whichBit can range from 0 to 39
 
 	bitset<8> setFromBytes[NR_BITS];
 	for(int a=0 ; a<NR_BITS ; ++a) setFromBytes[a] = bytes[a];
@@ -25,9 +25,7 @@ bool Block::getBit(int whichBit) {
 	int posInByte = whichBit % 8;
 	int whichByte = whichBit / 8;
 
-	//return setFromBytes[whichByte][7-posInByte];	// FIXME: Correct?
-	bitset<8> temp = setFromBytes[whichByte];
-	return temp[7-posInByte];
+	return setFromBytes[whichByte][7-posInByte];
 }
 
 

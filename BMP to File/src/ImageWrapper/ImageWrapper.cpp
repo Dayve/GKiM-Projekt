@@ -11,19 +11,19 @@ ImageWrapper::ImageWrapper() :
 {}
 
 
-void ImageWrapper::Load(const string& fullPath) {
-	if(img.loadFromFile(fullPath)) {
-		cout << fullPath <<" successfully loaded\n";
+void ImageWrapper::Load(const string& pathWname) {
+	if(img.loadFromFile(pathWname)) {
+		cout << pathWname <<" successfully loaded\n";
 		loadedFlag = true;
 	}
 	else cout << "Error while loading image.\n";
 }
 
 
-void ImageWrapper::ExportFile(bool codingType, bool grayscale, const string& dataDir) {
+void ImageWrapper::ExportFile(bool codingType, bool grayscale) {
 	if(!loadedFlag) return;
 
-	outputFile.ExportFromImg(img, codingType, grayscale, dataDir);
-	cout << "Binary file exported\n";
+	outputFile.ExportFromImg(img, codingType, grayscale);
+	cout << "Binary file exported (output.file)\n";
 }
 

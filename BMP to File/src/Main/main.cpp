@@ -5,19 +5,15 @@
 using namespace std; 
 
 int main(int argc, char* argv[]) {
-/*	
- *	dataPath could be configured to be set in CMakeLists.txt, possibly files could be shared 
- *	between subprojects for testing purposes (requires some changes in project tree)
- */
-	string filename, dataPath = "../data/"; 
+	string pathWithFilename;
 	bool codingType, grayscale;
 	ImageWrapper ImgObj;
 
 	if(argc != 4) {
-		cout << "Usage: "<<argv[0]<<" filename 0/1(coding type) 0/1(grayscale)\n";
+		cout << "Usage: "<<argv[0]<<" path/to/filename.bmp 0/1(coding type) 0/1(grayscale)\n";
 	}
 	else {
-		filename = argv[1];
+		pathWithFilename = argv[1];
 		codingType = atoi(argv[2]);
 		grayscale = atoi(argv[3]);
 
@@ -26,8 +22,8 @@ int main(int argc, char* argv[]) {
 		cout << " Coding type: " << (codingType ? "Byterun" : "Arithmetic Coding") << endl;
 		cout << "-----------------------------\n";
 
-		ImgObj.Load(dataPath + filename);
-		ImgObj.ExportFile(codingType, grayscale, dataPath);
+		ImgObj.Load(pathWithFilename);
+		ImgObj.ExportFile(codingType, grayscale);
 	}
 
 	return 0;

@@ -13,15 +13,16 @@ class BinaryFile {
 		BinaryFile() : imgW(0), imgH(0) {}
 		~BinaryFile() {}
 
-		void ExportFromImg(sf::Image& image, bool codingType, bool grayscale, const std::string& dataDir);
-		bool ImportFromFile(const std::string& fullPath);
+		void ExportFromImg(sf::Image& image, bool codingType, bool grayscale);
+		bool ImportFromFile(const std::string& pathWithName);
 
-		void PrintOutFile();	// [DEBUG ONLY]
-
-		std::vector<sf::Uint8> values;
-		uint16_t imgW, imgH;
+		sf::Uint8* getValuesAddress();
+		unsigned getW();
+		unsigned getH();
 
 	private:
+		uint16_t imgW, imgH;
+		std::vector<sf::Uint8> values;
 		std::vector<Block> blocks;
 };
 

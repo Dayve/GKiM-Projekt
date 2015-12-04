@@ -6,20 +6,20 @@ FileWrapper::FileWrapper() :
 {}
 
 
-void FileWrapper::Load(const string& fullPath) {
-	if(inputFile.ImportFromFile(fullPath)) {
-		cout << fullPath <<" successfully loaded\n";
+void FileWrapper::Load(const string& pathWname) {
+	if(inputFile.ImportFromFile(pathWname)) {
+		cout << pathWname <<" successfully loaded\n";
 		loadedFlag = true;
 	}
 	else cout << "Error while loading binary file.\n";
 }
 
 
-void FileWrapper::ExportBMP(const string& dataDir) {
+void FileWrapper::ExportBMP() {
 	if(!loadedFlag) return;
 
-	resultImg.create(inputFile.imgW, inputFile.imgH, &inputFile.values[0]);
-	resultImg.saveToFile(dataDir + "result.bmp");
+	resultImg.create(inputFile.getW(), inputFile.getH(), inputFile.getValuesAddress());
+	resultImg.saveToFile("../data/result.bmp");	// TODO: Change path if needed
 
 	cout << "BMP exported (result.bmp)\n";
 }
