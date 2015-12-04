@@ -21,6 +21,11 @@ int main(int argc, char* argv[]) {
 		codingType = atoi(argv[2]);
 		grayscale = atoi(argv[3]);
 
+		cout << "CHOSEN OPTIONS: -------------\n";
+		cout << " Grayscale: " << (grayscale ? "Yes" : "No") << endl;
+		cout << " Coding type: " << (codingType ? "Byterun" : "Arithmetic Coding") << endl;
+		cout << "-----------------------------\n";
+
 		ImgObj.Load(dataPath + filename);
 		ImgObj.ExportFile(codingType, grayscale, dataPath);
 	}

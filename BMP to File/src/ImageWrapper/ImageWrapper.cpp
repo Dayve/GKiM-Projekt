@@ -13,7 +13,7 @@ ImageWrapper::ImageWrapper() :
 
 void ImageWrapper::Load(const string& fullPath) {
 	if(img.loadFromFile(fullPath)) {
-		cout << fullPath <<" loaded\n";
+		cout << fullPath <<" successfully loaded\n";
 		loadedFlag = true;
 	}
 	else cout << "Error while loading image.\n";

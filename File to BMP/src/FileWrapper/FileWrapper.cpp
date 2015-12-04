@@ -7,10 +7,17 @@ FileWrapper::FileWrapper() :
 
 
 void FileWrapper::Load(const string& fullPath) {
-	inputFile.ImportFromFile(fullPath);
+	if(inputFile.ImportFromFile(fullPath)) {
+		cout << fullPath <<" successfully loaded\n";
+		loadedFlag = true;
+	}
+	else cout << "Error while loading binary file.\n";
 }
 
 
 void FileWrapper::ExportBMP(const string& dataDir) {
-	// TODO
+	if(!loadedFlag) return;
+
+	// TODO:
+	// - [ ] use sf::Image::create and sf::Image::saveToFile to export BMP
 }

@@ -23,7 +23,9 @@ bool Block::getBit(int whichBit) {
 	int posInByte = whichBit % 8;
 	int whichByte = whichBit / 8;
 
-	return setFromBytes[whichByte][posInByte];	// TODO: MAKE SURE IT'S CORRECT TO USE [][]
+	//return setFromBytes[whichByte][posInByte];	// FIXME: Correct?
+	bitset<8> temp = setFromBytes[whichByte];
+	return temp[posInByte];
 }
 
 

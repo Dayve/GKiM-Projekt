@@ -40,35 +40,13 @@ void BinaryFile::ExportFromImg(sf::Image& image, bool codingType, bool grayscale
 		}
 	}
 
-
-	// ########## Printing out: [DEBUG ONLY]
-	// -------------------------------------------------------- BIT BUFFER BEFORE:
-	cout << "bitBuffer before: ";
-	for(int i=0 ; i<bitBuffer.size() ; ++i) {
-		cout << bitBuffer[i];
-		if((i+1) % Block::NR_BITS == 0) cout << " ";
-	}
-	cout << endl;
-	// ##########
-
-
 	// Every NR_BITS bits in bitBuffer are in reverse order, so we fix that:
 	for(int i=0 ; i<bitBuffer.size()/Block::NR_BITS ; ++i) {
 		// NR_BITS/2 will be rounded down for odd numbers, but this is fine, because the middle bit won't be swapped:
 		for(int j=0 ; j<Block::NR_BITS/2 ; ++j) swap(bitBuffer[j + i*Block::NR_BITS], bitBuffer[Block::NR_BITS-1-j + i*Block::NR_BITS]);
 	}
 
-
-	// ########## Printing out: [DEBUG ONLY]
-	// -------------------------------------------------------- BIT BUFFER AFTER:
-	cout << "bitBuffer after:  ";
-	for(int i=0 ; i<bitBuffer.size() ; ++i) {
-		cout << bitBuffer[i];
-		if((i+1) % Block::NR_BITS == 0) cout << " ";
-	}
-	cout << endl;
-	// ##########
-	
+	blocks.push_back(Block());	// There were no Blocks before in blocks vector, so we add the first one
 
 	// Here we put bits from bitBuffer into blocks of 40 bits (5*8 bytes):
 	for(int i=0, j=0, blockIndex=0 ; i<bitBuffer.size() ; ++i, ++j) {
@@ -117,8 +95,12 @@ void BinaryFile::ExportFromImg(sf::Image& image, bool codingType, bool grayscale
 
 
 
-void BinaryFile::ImportFromFile(const std::string& fullPath) {
+bool BinaryFile::ImportFromFile(const std::string& fullPath) {
+	// Check input: [DEBUG ONLY]
+	PrintOutFile();
+
 	ifstream inputFile(fullPath.c_str(), ios::binary | ios::in);
+	if(inputFile.fail()) return false;
 
 	uint16_t imgW, imgH;
 	bool codingType, grayscale;
@@ -141,25 +123,27 @@ void BinaryFile::ImportFromFile(const std::string& fullPath) {
 	// (If values don't fit exactly in some amount of blocks add one to the amount they take, otherwise, get this amount)
 	int numBlocks = ((imgW*imgH*3 * 5) % 40) ? ((imgW*imgH*3 * 5) / 40)+1 : ((imgW*imgH*3 * 5) / 40);
 
+	// Read bits one blockwise:
 	for(int w=0 ; w<numBlocks ; ++w) {
-		inputFile.read(reinterpret_cast<char*>(&blocks[w]), Block::NR_BITS);	// We read one block (NR_BITS, that is 5 bytes) at the time 
 		blocks.push_back(Block());
+		inputFile.read(reinterpret_cast<char*>(&blocks[w]), Block::NR_BITS);	// We read one block (NR_BITS, that is 5 bytes) at the time 
 	}
 
-	for(int i=0 ; i<blocks.size() ; ++i) {
-		for(int j=0 ; j<Block::NR_BITS*8 ; ++j) {
-			cout << blocks[i].getBit(j);
-			if((j+1) % 8 == 0) cout << " ";
+	cout << "\nReaded:\n";
+	for(int i=0 ; i<blocks.size() ; ++i) {			// For every block
+		for(int j=0 ; j<Block::NR_BITS ; ++j) {		// For every byte
+			for(int k=0 ; k<8 ; ++k) { 				// For every bit
+				cout << blocks[i].getBit(j*8 + 7-k);	
+			}
+			cout << " ";
 		}
 	}
-	cout << endl;
+	cout << endl << endl;
+
+	return true;
 
 	// TODO:
-	// - [x] read values to blocks (std::vector)
-	// - [x] write code of Block::getBit
-	// - [ ] fix order bugs (important)
-	// - [ ] use Block::getBit to translate binary values and put them into values (std::vector)
-	// - [ ] use sf::Image::create and sf::Image::saveToFile to export BMP
+	// - [ ] use Block::getBit to translate binary values and put them into "values" (std::vector)
 }
 
 
