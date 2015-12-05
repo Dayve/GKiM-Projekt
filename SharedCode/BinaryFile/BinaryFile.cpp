@@ -148,7 +148,7 @@ bool BinaryFile::ImportFromFile(const std::string& pathWithName) {
 				if(blocks[i].getBit(j*Block::NR_BITS + k)) valueFromBits += pow(2, Block::NR_BITS-1 - k);
 			}
 
-			valueFromBits = (valueFromBits*255.0)/31.0;
+			valueFromBits = (valueFromBits*255.0)/(pow(2.0, Block::NR_BITS)-1);
 			readedValuesCounter++;
 
 			int t = 1;
