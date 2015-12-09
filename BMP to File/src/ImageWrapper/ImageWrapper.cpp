@@ -23,7 +23,7 @@ void ImageWrapper::Load(const string& pathWname) {
 void ImageWrapper::ExportFile(bool codingType, bool grayscale) {
 	if(!loadedFlag) return;
 
-	outputFile.ExportFromImg(img, codingType, grayscale);
+	outputFile.ExportFromImg(img, codingType, grayscale, "../data/output.file");
 	cout << "Binary file exported (output.file)\n";
 }
 

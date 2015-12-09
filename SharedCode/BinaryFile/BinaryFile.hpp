@@ -13,7 +13,7 @@ class BinaryFile {
 		BinaryFile() : imgW(0), imgH(0) {}
 		~BinaryFile() {}
 
-		void ExportFromImg(sf::Image& image, bool codingType, bool grayscale);
+		void ExportFromImg(sf::Image& image, bool codingType, bool grayscale, const std::string& resultPathWithName);
 		bool ImportFromFile(const std::string& pathWithName);
 
 		sf::Uint8* getValuesAddress();

@@ -4,7 +4,7 @@
 #include <bitset>
 using namespace std;
 
-void BinaryFile::ExportFromImg(sf::Image& image, bool codingType, bool grayscale) {
+void BinaryFile::ExportFromImg(sf::Image& image, bool codingType, bool grayscale, const string& resultPathWithName) {
 	// Fetching from image (sf::Image -> sf::Uint8) to values (std::vector<sf::Uint8>):
 	for(unsigned int yy=0 ; yy<image.getSize().y ; ++yy) {
 		for(unsigned int xx=0 ; xx<image.getSize().x ; ++xx) {
@@ -71,7 +71,7 @@ void BinaryFile::ExportFromImg(sf::Image& image, bool codingType, bool grayscale
 		We can later deduce the number of blocks from width and height.
 		------------------------------------------- */
 
-	ofstream outputFile("../data/output.file", ios::binary | ios::out);
+	ofstream outputFile(resultPathWithName.c_str(), ios::binary | ios::out);
 
 	uint16_t imgW = image.getSize().x;
 	uint16_t imgH = image.getSize().y;
