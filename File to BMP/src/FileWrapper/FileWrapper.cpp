@@ -18,7 +18,7 @@ void FileWrapper::Load(const string& pathWname) {
 void FileWrapper::ExportBMP() {
 	if(!loadedFlag) return;
 
-	resultImg.create(inputFile.getW(), inputFile.getH(), inputFile.getValuesAddress());
+	resultImg.create(inputFile.getW(), inputFile.getH(), inputFile.getPxValuesAddress());
 	resultImg.saveToFile("../data/result.bmp");	// TODO: Change path if needed
 
 	cout << "BMP exported (result.bmp)\n";

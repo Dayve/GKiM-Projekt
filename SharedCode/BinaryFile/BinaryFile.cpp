@@ -4,23 +4,37 @@
 #include <bitset>
 using namespace std;
 
+
+void BinaryFile::FetchValuesFromImg(sf::Image& image) {
+    // Fetching from image (sf::Image -> sf::Uint8) to pixelValues (std::vector<sf::Uint8>):
+    for(unsigned int yy=0 ; yy<image.getSize().y ; ++yy) {
+        for(unsigned int xx=0 ; xx<image.getSize().x ; ++xx) {
+            pixelValues.push_back(image.getPixel(xx, yy).r);
+            pixelValues.push_back(image.getPixel(xx, yy).g);
+            pixelValues.push_back(image.getPixel(xx, yy).b);
+        }
+    }
+}
+
+
+void BinaryFile::ExportFromImg_coding(sf::Image& image, bool codingType, bool grayscale, const string& resultPathWithName) {
+    FetchValuesFromImg(image);
+    // TODO: That's where Byterun should work on pixelValues. I guess exporting binary file will go here.
+    // Remember that if BMP is in grayscale there will be sequences of 3 identical values.
+    // We won't be scaling those values down (at least for now) so that saving results to a file will be more convenient (saving signed values).
+}
+
+
 void BinaryFile::ExportFromImg(sf::Image& image, bool codingType, bool grayscale, const string& resultPathWithName) {
-	// Fetching from image (sf::Image -> sf::Uint8) to values (std::vector<sf::Uint8>):
-	for(unsigned int yy=0 ; yy<image.getSize().y ; ++yy) {
-		for(unsigned int xx=0 ; xx<image.getSize().x ; ++xx) {
-			values.push_back(image.getPixel(xx, yy).r);
-			values.push_back(image.getPixel(xx, yy).g);
-			values.push_back(image.getPixel(xx, yy).b);
-		}
-	}
+    FetchValuesFromImg(image);
 
-	vector<bool> bitBuffer;		// Holds results of converting values (scaled down to fit in 5 bits) from decimal to binary
+	vector<bool> bitBuffer;		// Holds results of converting pixel values (scaled down to fit in 5 bits) from decimal to binary
 
-	// We scale values down to 5 bits and put results in bitBuffer:
+	// We scale pixel values down to 5 bits and put results in bitBuffer:
 	// (We've put for loops inside if blocks and not the other way around, because this way we check condidion only once)
 	if(grayscale) {
-		for(int i=0 ; i<values.size() ; i += 3) {
-			sf::Uint8 avgColor = (values[i] + values[i+1] + values[i+2])/3;	// Calculate the grayscale equivalent of given color
+		for(int i=0 ; i<pixelValues.size() ; i += 3) {
+			sf::Uint8 avgColor = (pixelValues[i] + pixelValues[i+1] + pixelValues[i+2])/3;	// Calculate the grayscale equivalent of given color
 			sf::Uint8 scaledVal = (avgColor * (pow(2.0, Block::NR_BITS)-1))/255.0;		// Scale down to 5 bits in temporary variable
 
 			for(int w=0 ; w<Block::NR_BITS ; ++w) {
@@ -30,8 +44,8 @@ void BinaryFile::ExportFromImg(sf::Image& image, bool codingType, bool grayscale
 		}
 	}
 	else {
-		for(int i=0 ; i<values.size() ; ++i) {
-			sf::Uint8 scaledVal = (values[i] * (pow(2.0, Block::NR_BITS)-1))/255.0;		// Scale down to 5 bits in temporary variable
+		for(int i=0 ; i<pixelValues.size() ; ++i) {
+			sf::Uint8 scaledVal = (pixelValues[i] * (pow(2.0, Block::NR_BITS)-1))/255.0;		// Scale down to 5 bits in temporary variable
 
 			for(int w=0 ; w<Block::NR_BITS ; ++w) {
 				bitBuffer.push_back(scaledVal % 2);
@@ -155,12 +169,12 @@ bool BinaryFile::ImportFromFile(const std::string& pathWithName) {
 			if(grayscale) t = 3;	// If grayscale is set, we put there 3 identical values (one for each channel)
 
 			for(int l=0 ; l<t ; ++l) {
-				values.push_back(valueFromBits);
+				pixelValues.push_back(valueFromBits);
 				addedValuesCounter++;
 			}
 
 			if((addedValuesCounter)%3 == 0) {
-				values.push_back(255);	// Alpha component (sf::Image::saveToFile needs that)
+				pixelValues.push_back(255);	// Alpha component (sf::Image::saveToFile needs that)
 			}
 		}
 	}
@@ -169,8 +183,8 @@ bool BinaryFile::ImportFromFile(const std::string& pathWithName) {
 }
 
 
-sf::Uint8* BinaryFile::getValuesAddress() {
-	return &values[0];
+sf::Uint8* BinaryFile::getPxValuesAddress() {
+	return &pixelValues[0];
 }
 
 
