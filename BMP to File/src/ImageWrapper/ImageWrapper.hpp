@@ -4,8 +4,6 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 
-#include <cmath>	// For pow() in block::set
-
 #include "../../../SharedCode/BinaryFile/BinaryFile.hpp"
 
 class ImageWrapper {

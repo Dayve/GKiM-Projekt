@@ -10,9 +10,9 @@ void Block::setBit(int whichBit) {
 	int posInByte = whichBit % 8;
 	int whichByte = whichBit / 8;
 
-	uint8_t temp = pow(2, 7-posInByte);	// Set 1 at (7-posInByte)th position in temp byte
+	uint8_t temp = pow(2, 7-posInByte);	// Set 1 at the (7-posInByte)th position in temp byte
 
-	bytes[whichByte] |= temp;			// "or" together temp byte and corresponding byte from array
+	bytes[whichByte] |= temp;			// "or" together the temp byte and the corresponding byte from array
 }
 
 
