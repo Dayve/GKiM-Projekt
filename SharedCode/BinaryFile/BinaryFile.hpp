@@ -2,6 +2,8 @@
 #define _BINARYFILE_H_
 
 #include "../Block/Block.hpp"
+#include "../ByteRun/ByteRun.hpp"
+#include "../ArithmeticCoding/ArithmeticCoding.hpp"
 
 #include <SFML/Graphics.hpp>
 #include <vector>
@@ -28,6 +30,10 @@ class BinaryFile {
 		std::vector<Block> blocks;
 
         void FetchValuesFromImg(sf::Image& image);
+
+        // Compression:
+        ArithmeticCoding ACoding;
+        ByteRun BRun;
 };
 
 #endif

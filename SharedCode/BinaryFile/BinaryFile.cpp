@@ -19,9 +19,33 @@ void BinaryFile::FetchValuesFromImg(sf::Image& image) {
 
 void BinaryFile::ExportFromImg_coding(sf::Image& image, bool codingType, bool grayscale, const string& resultPathWithName) {
 	FetchValuesFromImg(image);
-    // TODO: That's where Byterun should work on the pixelValues. I guess exporting binary file will go here.
-    // Remember that if the BMP is in grayscale there will be sequences of 3 identical values.
-    // We won't be scaling those values down (at least for now) so that saving results to a file will be more convenient (saving signed values).
+
+    // Scale values and save them in ScaledValues vectors, depending on codingType:
+	if(grayscale) {
+		for(int i=0 ; i<pixelValues.size() ; i += 3) {
+			sf::Uint8 avgColor = (pixelValues[i] + pixelValues[i+1] + pixelValues[i+2])/3;  // Calculate the grayscale equivalent of a given color
+			sf::Uint8 scaledVal = (avgColor * (pow(2.0, Block::NR_BITS)-1))/255.0;          // Scale down to 5 bits in the temporary variable
+
+            // Byterun: codingType=1, Arithmetic Coding: codingType=0
+            if(codingType) BRun.ScaledValues.push_back(scaledVal);
+            else ACoding.ScaledValues.push_back(scaledVal);
+		}
+	}
+	else {
+		for(int i=0 ; i<pixelValues.size() ; ++i) {
+			sf::Uint8 scaledVal = (pixelValues[i] * (pow(2.0, Block::NR_BITS)-1))/255.0;  // Scale down to 5 bits in the temporary variable
+
+            if(codingType) BRun.ScaledValues.push_back(scaledVal);
+            else ACoding.ScaledValues.push_back(scaledVal);
+		}
+	}
+
+    if(codingType) BRun.Compress();
+    else ACoding.Compress();
+
+    // TODO: 
+    // Here we should save the results (from proper Results std::vector, which is now, 
+    // after calling Compress() function filled with data) to binary file.
 }
 
 

@@ -1,27 +1,67 @@
 #include "ByteRun.hpp"
 
-// ByteRun algorithm, basic (and not really adapted yet) version.
-// Compresses sequences of at least two identical bytes, prints results to STDOUT.
-
 #include <string>
 #include <iostream>
+
 using namespace std;
 
+void ByteRun::Test() { // Passed, works good
+    ScaledValues.push_back(2);
+    ScaledValues.push_back(1);
+    ScaledValues.push_back(1);
+    ScaledValues.push_back(1);
+    ScaledValues.push_back(3);
+    ScaledValues.push_back(3);
+    ScaledValues.push_back(4);
+    ScaledValues.push_back(31);
+    Compress();
+    
+    for(int i=0 ; i<Results.size() ; ++i) {
+        cout << static_cast<short>(Results[i]) << " ";
+    }
 
-void ByteRun::Compress(sf::Uint8 sequence[], int length) {
+    // -----------------------------------------------------
+    cout << endl << endl;
+
+    ScaledValues.clear();
+    Results.clear();
+
+    Results.push_back(2);
+    Results.push_back(1);
+    Results.push_back(2);
+    Results.push_back(3);
+    Results.push_back(-2);
+    Results.push_back(4);
+    Results.push_back(-1);
+    Results.push_back(6);
+    Results.push_back(-4);
+    Results.push_back(9);
+    Decompress();
+
+    for(int i=0 ; i<ScaledValues.size() ; ++i) {
+        cout << static_cast<unsigned short>(ScaledValues[i]) << " ";
+    }
+
+    cout << endl << endl;
+}
+
+
+void ByteRun::Compress() {
     int i = 0;
+    int length = ScaledValues.size();
 
     // Until every byte is compressed:
     while (i < length)
     {
         // Sequence of repeated bytes:
-        if ((i < length-1) and (sequence[i] == sequence[i+1])) {
+        if ((i < length-1) and (ScaledValues[i] == ScaledValues[i+1])) {
             // Calculate the length of a sequence:
             int j = 0;
-            while ((i+j < length-1) and (sequence[i+j] == sequence[i+j+1]) and (j < 127)) j++;
+            while ((i+j < length-1) and (ScaledValues[i+j] == ScaledValues[i+j+1]) and (j < 127)) j++;
 
-            // Print out compressed sequence:
-            cout << -j << ", " << (int)sequence[i+j] << ", ";
+            // Save compressed sequence:
+            Results.push_back(-j);
+            Results.push_back((char)ScaledValues[i+j]);
 
             // Move the pointer by the length of a sequence:
             i += (j+1);
@@ -30,15 +70,15 @@ void ByteRun::Compress(sf::Uint8 sequence[], int length) {
         else {
             // Calculate the length of a sequence:
             int j=0;
-            while ((i+j < length-1) and (sequence[i+j] != sequence[j+i+1]) and (j < 128)) j++;
+            while ((i+j < length-1) and (ScaledValues[i+j] != ScaledValues[j+i+1]) and (j < 128)) j++;
 
             // And ending:
             if ((i+j == length-1) and (j < 128)) j++;
 
-            // Print out compressed sequence:
-            cout << (j-1) << ", ";
+            // Save compressed sequence:
+            Results.push_back(j-1);
             for (int k=0; k<j; k++) {
-                cout << (int)sequence[i+k] << ", ";
+                Results.push_back((char)ScaledValues[i+k]);
             }
 
             // Move the pointer by the length of a sequence:
@@ -48,34 +88,28 @@ void ByteRun::Compress(sf::Uint8 sequence[], int length) {
 }
 
 
-void ByteRun::Test() { // Can be removed
-    sf::Uint8 t[] = {1,2,3,4,4,4,6,6,9,9,9,9,9};
-    Compress(t, sizeof(t)/sizeof(t[0]));
-    // Result: 2, 1, 2, 3, -2, 4, -1, 6, -4, 9
-}
-
-
-void ByteRun::Decompress(sf::Uint8 sequence[], int length) {
+void ByteRun::Decompress() {
     int i = 0;
+    int length = Results.size();
 
     // Until every byte is decompressed:
     while (i < length) {
         // Code for "empty":
-        if (sequence[i] == -128) i++;
+        if (Results[i] == -128) i++;
 
         // Sequence of repeated bytes:
-        else if (sequence[i] < 0) {
-            for (int j=0; j<-(sequence[i]-1); j++) {
-                cout << (int)sequence[i+1] << ", ";
+        else if (Results[i] < 0) {
+            for (int j=0; j<-(Results[i]-1); j++) {
+                ScaledValues.push_back((sf::Uint8)Results[i+1]);
             }
             i += 2;
         }
         // Sequence of different bytes:
         else {
-            for (int j=0; j<(sequence[i]+1); j++) {
-                cout << (int)sequence[i+1+j] << ", ";
+            for (int j=0; j<(Results[i]+1); j++) {
+                ScaledValues.push_back((sf::Uint8)Results[i+1+j]);
             }
-            i += sequence[i]+2;
+            i += Results[i]+2;
         }
     }
 }

@@ -2,13 +2,19 @@
 #define _BYTERUN_H_
 
 #include <SFML/Graphics.hpp>
+#include <vector>
+
+// TODO: Refactoring: add inheritance
 
 class ByteRun {
     public:
-        static void Compress(sf::Uint8 sequence[], int length);
-        static void Decompress(sf::Uint8 sequence[], int length);
+        void Compress();
+        void Decompress();
 
-        static void Test();
+        void Test(); // TODO: REMOVE WHEN NOT NEEDED ANYMORE
+
+        std::vector<sf::Uint8> ScaledValues;    // The algorithm will operate on those
+        std::vector<char> Results;              // Output sequence of the algorithm
 };
 
 #endif
