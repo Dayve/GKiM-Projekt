@@ -36,7 +36,7 @@ Opcjonalnie:
     * Konfigurujemy linkowanie SFMLa (np: według [tego tutoriala](http://cpp0x.pl/kursy/Kurs-SFML-2-x-C++/Instalacja-i-konfiguracja/Konfiguracja-SFML-2-0-Code-Blocks/464))
     * W "Project"->"Build Options" zaznaczamy "Have g++ follow (...) -std=c++11"
     * Dodajemy pliki projektu: "Project"->"Add files recursively" i wybieramy "src" z tego samego folderu oraz "Shared Code"
-    * Zmieniamy odpowiednio argumenty (normalnie podawane z linii komend) w "Project"-"Set programs' arguments"
+    * Zmieniamy odpowiednio argumenty (normalnie podawane z linii komend) w "Project"->"Set programs' arguments"
     * Możemy też (opcjonalnie) zmienić folder na wygenerowane pliki w "Project"->"Properties"->"Build Targets"
 
 **Uruchamianie programów dla danych plików:**
@@ -60,8 +60,8 @@ Opcjonalnie:
   
     W bieżącym układzie folderów będzie to np: `./ftb ../data/output.file`.
 
-+ **IDE:**
-Jeśli zmieniliśmy odpowiednio argumenty (normalnie podawane z linii komend) w "Project"-"Set programs' arguments" to zostaną one podane automatycznie
++ **IDE - na przykładzie Code::Blocks:**
+Jeśli zmieniliśmy odpowiednio argumenty (normalnie podawane z linii komend) w "Project"->"Set programs' arguments" to zostaną one podane automatycznie
 
 
 

@@ -1,24 +1,20 @@
 #include "ArithmeticCoding.hpp"
 #include <iostream>
+#include <cmath>
 using namespace std;
-
-ArithmeticCoding::ArithmeticCoding() {
-    float probVal = 0.0f;
-    for(sf::Uint8 pxVal=0 ; pxVal<32 ; ++pxVal) {
-        ProbTable[pxVal] = bounds(probVal, probVal+PROB);
-        probVal += PROB;
-    }
-
-    /*
-    for(sf::Uint8 pxVal=0 ; pxVal<32 ; ++pxVal) {
-        cout << static_cast<unsigned short>(pxVal) << ": " << ProbTable[pxVal].lower << " > " << ProbTable[pxVal].upper << endl;
-    }
-    // Works fine
-    */
-}
 
 
 void ArithmeticCoding::Compress() {
+    float lowerBound = 0.0f;
+    for(int i=0, j=0 ; i<ScaledValues.size() ; ++i, ++j) {
+        if(j == N_MULT) {
+            Results.push_back(lowerBound);
+            j = 0;
+            lowerBound = 0.0f;
+        }
+        lowerBound += ScaledValues[i] * pow(PROB, j+1);
+    }
+    // TODO: Check & finish
 }
 
 

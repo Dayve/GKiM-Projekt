@@ -8,8 +8,6 @@
 
 class ArithmeticCoding {
     public:
-        ArithmeticCoding();
-
         void Compress();
         void Decompress();
 
@@ -18,16 +16,7 @@ class ArithmeticCoding {
 
     private:
         constexpr static float PROB = 1.0f/32.0f;   // Fixed probability
-        const static int MAX_N_MULT = 28;           // Not sure if it's right [FIXME]
-
-        struct bounds {
-            float lower, upper;
-
-            bounds() {}
-            bounds(float l, float u) : lower(l), upper(u) {}
-        };
-
-        std::map<sf::Uint8, bounds> ProbTable;
+        const static int N_MULT = 24;
 };
 
 #endif
