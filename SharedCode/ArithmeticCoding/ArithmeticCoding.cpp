@@ -5,7 +5,7 @@
 using namespace std;
 
 
-void ArithmeticCoding::Test() { // Passed every time for SEQ_LEN = 4
+void ArithmeticCoding::Test() { // TODO: Remove
     ScaledValues.push_back(rand()%32);
     ScaledValues.push_back(rand()%32);
     ScaledValues.push_back(rand()%32);
@@ -80,4 +80,7 @@ void ArithmeticCoding::Decompress() {
 }
 
 
+void* ArithmeticCoding::GetResultsAddr() {
+    return Results.empty() ? nullptr : &Results[0];
+}
 

@@ -4,6 +4,8 @@
 #include <bitset>
 using namespace std;
 
+// TODO: /Refactoring/ Code duplication for writing header - DRY
+
 
 void BinaryFile::FetchValuesFromImg(sf::Image& image) {
     // Fetching from an image (sf::Image -> sf::Uint8) to pixelValues (std::vector<sf::Uint8>):
@@ -43,9 +45,24 @@ void BinaryFile::ExportFromImg_coding(sf::Image& image, bool codingType, bool gr
     if(codingType) BRun.Compress();
     else ACoding.Compress();
 
-    // TODO: 
-    // Here we should save the results (from proper Results std::vector, which is now, 
-    // after calling Compress() function filled with data) to binary file.
+    // Saving to the file:
+    ofstream outputFile(resultPathWithName.c_str(), ios::binary | ios::out);
+
+    uint16_t imgW = image.getSize().x;
+    uint16_t imgH = image.getSize().y;
+
+    if(codingType) imgW += pow(2, 15);  // Could be imgW |= 0b1000000000000000
+    if(grayscale) imgH += pow(2, 15);   // Could be imgH |= 0b1000000000000000
+
+    // Writing header:
+    outputFile.write(reinterpret_cast<const char*>(&imgW), sizeof(imgW));
+    outputFile.write(reinterpret_cast<const char*>(&imgH), sizeof(imgH));
+
+    // Writing blocks (5 bytes each, hence the second parameter is "blocks.size()*Block::NR_BITS"):
+    if(codingType) outputFile.write(static_cast<const char*>(BRun.GetResultsAddr()), BRun.Results.size() /*sizeof(char)==1*/);
+    else outputFile.write(static_cast<const char*>(ACoding.GetResultsAddr()), ACoding.Results.size() * sizeof(float));
+
+    outputFile.close();
 }
 
 

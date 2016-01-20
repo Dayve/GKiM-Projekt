@@ -5,7 +5,7 @@
 
 using namespace std;
 
-void ByteRun::Test() { // Passed, works good
+void ByteRun::Test() { // TODO: Remove
     ScaledValues.push_back(2);
     ScaledValues.push_back(1);
     ScaledValues.push_back(1);
@@ -21,7 +21,7 @@ void ByteRun::Test() { // Passed, works good
     }
 
     // -----------------------------------------------------
-    cout << endl << endl;
+    cout << endl;
 
     ScaledValues.clear();
     Results.clear();
@@ -42,7 +42,7 @@ void ByteRun::Test() { // Passed, works good
         cout << static_cast<unsigned short>(ScaledValues[i]) << " ";
     }
 
-    cout << endl << endl;
+    cout << endl;
 }
 
 
@@ -112,5 +112,10 @@ void ByteRun::Decompress() {
             i += Results[i]+2;
         }
     }
+}
+
+
+void* ByteRun::GetResultsAddr() {
+    return Results.empty() ? nullptr : &Results[0];
 }
 
