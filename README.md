@@ -43,9 +43,10 @@ Opcjonalnie:
 + **CMake + Terminal:**
   + Dla programu **btf** podajemy:
     - Jako pierwszy argument ścieżkę do pliku BMP (z nazwą i rozszerzeniem .bmp)
-    - Jako drugi argument 0-1 dla rodzaju kodowania: (nie ma na razie na nic wpływu)
+    - Jako drugi argument 0-2 dla rodzaju kodowania:
       + 0 kodowanie arytmetyczne na 5 bitach
       + 1 kodowanie Byterun
+      + 2 skalowanie wartości na 5-bitowe (z zapisem jedna obok drugiej)
     - Jako trzeci argument 0-1 dla opcji skala szarości:
       + 0 z zachowaniem kolorów
       + 1 przejście na odcienie szarości
