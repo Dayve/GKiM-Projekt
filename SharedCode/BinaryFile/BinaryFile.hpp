@@ -16,8 +16,8 @@ class BinaryFile {
         BinaryFile() : imgW(0), imgH(0) {}
         ~BinaryFile() {}
 
-        void ExportFromImg(sf::Image& image, bool codingType, bool grayscale, const std::string& resultPathWithName);
-        void ExportFromImg_coding(sf::Image& image, bool codingType, bool grayscale, const std::string& resultPathWithName);
+        void ExportFromImg(sf::Image& image, unsigned char codingType, bool grayscale, const std::string& resultPathWithName);
+        //void ExportFromImg_coding(sf::Image& image, bool codingType, bool grayscale, const std::string& resultPathWithName);
         bool ImportFromFile(const std::string& pathWithName);
 
         sf::Uint8* getPxValuesAddress(); // Used in FileWrapper::ExportBMP(), as a parameter for sf::Image::create()

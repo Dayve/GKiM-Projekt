@@ -11,7 +11,7 @@ void FileWrapper::Load(const string& pathWname) {
 		cout << pathWname <<" successfully loaded\n";
 		loadedFlag = true;
 	}
-	else cout << "Error while loading binary file.\n";
+	else cout << "Error while importing from a binary file.\n";
 }
 
 

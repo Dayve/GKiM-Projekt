@@ -18,7 +18,7 @@ class ImageWrapper {
 		~ImageWrapper() {}
 
 		void Load(const std::string& pathWname);
-		void ExportFile(bool codingType, bool grayscale);
+		void ExportFile(unsigned char codingType, bool grayscale);
 };
 
 #endif
