@@ -5,18 +5,16 @@
 using namespace std;
 
 
-void ArithmeticCoding::Test() { // Passed
-    ScaledValues.push_back(1);
-    ScaledValues.push_back(3);
-    ScaledValues.push_back(2);
+void ArithmeticCoding::Test() { // Passed every time for SEQ_LEN = 4
+    ScaledValues.push_back(rand()%32);
+    ScaledValues.push_back(rand()%32);
+    ScaledValues.push_back(rand()%32);
+    ScaledValues.push_back(rand()%32);
 
-    ScaledValues.push_back(2);
-    ScaledValues.push_back(3);
-    ScaledValues.push_back(1);
-
-    ScaledValues.push_back(1);
-    ScaledValues.push_back(0);
-    ScaledValues.push_back(3);
+    for(int i=0 ; i<ScaledValues.size() ; ++i) {
+        cout << static_cast<unsigned short>(ScaledValues[i]) << " ";
+    }
+    cout << endl;
 
     Results.clear();
     Compress();

@@ -17,8 +17,8 @@ class ArithmeticCoding {
         std::vector<float> Results;             // Output sequence of the algorithm
 
     private:
-        constexpr static float PROB = 1.0f/4.0f; // 1.0f/32.0f;   // Fixed probability
-        const static int SEQ_LEN = 9; //24          // Length of sequence per float
+        constexpr static float PROB = 1.0f/32.0f;   // Fixed probability
+        const static int SEQ_LEN = 4;               // Length of sequence per float
 };
 
 #endif
