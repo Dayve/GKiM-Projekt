@@ -11,12 +11,14 @@ class ArithmeticCoding {
         void Compress();
         void Decompress();
 
+        void Test(); // TODO: REMOVE WHEN NOT NEEDED ANYMORE
+
         std::vector<sf::Uint8> ScaledValues;    // The algorithm will operate on those
         std::vector<float> Results;             // Output sequence of the algorithm
 
     private:
-        constexpr static float PROB = 1.0f/32.0f;   // Fixed probability
-        const static int N_MULT = 24;
+        constexpr static float PROB = 1.0f/4.0f; // 1.0f/32.0f;   // Fixed probability
+        const static int SEQ_LEN = 9; //24          // Length of sequence per float
 };
 
 #endif
