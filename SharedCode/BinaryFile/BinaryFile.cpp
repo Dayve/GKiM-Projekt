@@ -43,7 +43,7 @@ void BinaryFile::ExportFromImg(sf::Image& image, unsigned char codingType, bool 
     }
     else {
         for(int i=0 ; i<pixelValues.size() ; ++i) {
-            sf::Uint8 scaledVal = (pixelValues[i] * (pow(2.0, Block::NR_BITS)-1))/255.0;  // Scale down to 5 bits in the temporary variable
+            sf::Uint8 scaledVal = (pixelValues[i] * (pow(2.0, Block::NR_BITS)-1))/255.0;
 
             if(codingType == 2) {
                 for(int w=0 ; w<Block::NR_BITS ; ++w) {
@@ -136,7 +136,7 @@ bool BinaryFile::ImportFromFile(const std::string& pathWithName) {
 
     inputFile.read(reinterpret_cast<char*>(&codingType), sizeof(codingType));
 
-    if(codingType > pow(2,7)) { // Grayscale option on MSB of that byte
+    if(codingType >= pow(2,7)) { // Grayscale option on MSB of that byte
         grayscale = true;
         codingType -= pow(2, 7);
     }
@@ -207,14 +207,58 @@ bool BinaryFile::ImportFromFile(const std::string& pathWithName) {
             }
         }
     }
-    else { // TODO
-        return false;
+    else {                                          // TODO: /Refactoring/ DRY
+        if(codingType) { // Byterun
+            for(int p=0 ; p<numValuesInFile ; ++p) {
+                char resultFromFile;
+                inputFile.read(&resultFromFile, 1);
+                BRun.Results.push_back(resultFromFile);
+            }
 
-        if(codingType) {
-            //BRun.Decompress();
+            BRun.Decompress();
+
+            int addedValuesCounter = 0;
+            for(int s=0 ; s<BRun.ScaledValues.size() ; ++s) {
+                sf::Uint8 scaledBack = (BRun.ScaledValues[s] * 255.0)/(pow(2.0, Block::NR_BITS)-1);
+
+                int t = 1;
+                if(grayscale) t = 3; // If grayscale is set we put there 3 identical values (one for each channel)
+
+                for(int l=0 ; l<t ; ++l) {
+                    pixelValues.push_back(scaledBack);
+                    addedValuesCounter++;
+                }
+
+                if((addedValuesCounter)%3 == 0) {
+                    pixelValues.push_back(255); // Alpha component (sf::Image::saveToFile needs that)
+                }
+            }
         }
-        else {
-            //ACoding.Decompress();
+        else { // Arithmetic Coding
+            for(int p=0 ; p<numValuesInFile ; ++p) {
+                float resultFromFile;
+                inputFile.read(reinterpret_cast<char*>(&resultFromFile), sizeof(float));
+                ACoding.Results.push_back(resultFromFile);
+            }
+
+            ACoding.Decompress();
+
+            int addedValuesCounter = 0;
+            for(int s=0 ; s<ACoding.ScaledValues.size() ; ++s) {
+                sf::Uint8 scaledBack = (ACoding.ScaledValues[s] * 255.0)/(pow(2.0, Block::NR_BITS)-1);
+
+                int t = 1;
+                if(grayscale) t = 3; // If grayscale is set we put there 3 identical values (one for each channel)
+
+                for(int l=0 ; l<t ; ++l) {
+                    pixelValues.push_back(scaledBack);
+                    addedValuesCounter++;
+                }
+
+                if((addedValuesCounter)%3 == 0) {
+                    pixelValues.push_back(255); // Alpha component (sf::Image::saveToFile needs that)
+                }
+            }
         }
     }
 

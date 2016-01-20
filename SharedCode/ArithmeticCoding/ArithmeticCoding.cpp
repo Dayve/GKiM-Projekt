@@ -4,6 +4,8 @@
 #include <cmath>
 using namespace std;
 
+// TODO: Add support for series of values (at the end) shorter than SEQ_LEN
+
 
 void ArithmeticCoding::Test() { // TODO: Remove
     ScaledValues.push_back(rand()%32);
