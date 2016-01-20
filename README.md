@@ -4,7 +4,7 @@
   1. Pierwsza część: (SKOŃCZONA)
     + Pierwszy program: zapis wartości pixeli z obrazka w formacie BMP do pliku binarnego, 5 bitów na kanał.
     + Drugi program: odczyt z wygenerowanego pliku binarnego i eksport BMP.
-  2. Druga część: (DO ZROBIENIA)
+  2. Druga część: (SKOŃCZONA, z wyjątkiem obsługi ciągu którszego niż SEQ_LEN dla kodowania arytmetycznego)
     + Pierwszy program: kodowanie arytmetyczne lub Byterun na zawartości pliku binarnego.
     + Drugi program: odkodowanie pliku, odczyt i eksport BMP.
 
