@@ -141,23 +141,6 @@ bool BinaryFile::ImportFromFile(const std::string& pathWithName) {
         codingType -= pow(2, 7);
     }
 
-    // Calculate the number of values in file, then the number of blocks:
-    int numBlocks, numValuesInFile;
-
-    if(grayscale) numValuesInFile = imgW*imgH; // One per pixel
-    else numValuesInFile = imgW*imgH * 3;      // Three per pixel
-
-    // Calculate the number of blocks based of the amount of the values in a file:
-    numBlocks = ((numValuesInFile * Block::NR_BITS) % (Block::NR_BITS*8)) ? 
-        ((numValuesInFile * Block::NR_BITS) / (Block::NR_BITS*8)) + 1 : 
-        ((numValuesInFile * Block::NR_BITS) / (Block::NR_BITS*8));
-
-    // Read bits blockwise:
-    for(int w=0 ; w<numBlocks ; ++w) {
-        blocks.push_back(Block());
-        inputFile.read(reinterpret_cast<char*>(&blocks[w]), Block::NR_BITS); // We read one block (NR_BITS bytes) at the time 
-    }
-
     // Print out the readed information:
     string codingMethodsName;
 
@@ -172,7 +155,26 @@ bool BinaryFile::ImportFromFile(const std::string& pathWithName) {
     cout << " Coding type: " << codingMethodsName << endl;
     cout << "--------------------------------------\n";
 
+
+    // Calculate the number of values in file:
+    int numValuesInFile;
+
+    if(grayscale) numValuesInFile = imgW*imgH; // One per pixel
+    else numValuesInFile = imgW*imgH * 3;      // Three per pixel
+
+
     if (codingType == 2) {
+        // Calculate the number of blocks based of the amount of the values in a file:
+        int numBlocks = ((numValuesInFile * Block::NR_BITS) % (Block::NR_BITS*8)) ? 
+                        ((numValuesInFile * Block::NR_BITS) / (Block::NR_BITS*8)) + 1 : 
+                        ((numValuesInFile * Block::NR_BITS) / (Block::NR_BITS*8));
+
+        // Read bits blockwise:
+        for(int w=0 ; w<numBlocks ; ++w) {
+            blocks.push_back(Block());
+            inputFile.read(reinterpret_cast<char*>(&blocks[w]), Block::NR_BITS); // We read one block (NR_BITS bytes) at the time 
+        }
+
         // For counting how many values we have already read (so that we don't read the empty bits at the end) 
         // and added (so that we know where to put the alpha channel values):
         int readedValuesCounter = 0, addedValuesCounter = 0;
