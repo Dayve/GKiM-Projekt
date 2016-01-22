@@ -1,49 +1,5 @@
 #include "ByteRun.hpp"
-
-#include <string>
-#include <iostream>
-
 using namespace std;
-
-void ByteRun::Test() { // TODO: Remove
-    ScaledValues.push_back(2);
-    ScaledValues.push_back(1);
-    ScaledValues.push_back(1);
-    ScaledValues.push_back(1);
-    ScaledValues.push_back(3);
-    ScaledValues.push_back(3);
-    ScaledValues.push_back(4);
-    ScaledValues.push_back(31);
-    Compress();
-    
-    for(vector<char>::size_type i=0 ; i<Results.size() ; ++i) {
-        cout << static_cast<short>(Results[i]) << " ";
-    }
-
-    // -----------------------------------------------------
-    cout << endl;
-
-    ScaledValues.clear();
-    Results.clear();
-
-    Results.push_back(2);
-    Results.push_back(1);
-    Results.push_back(2);
-    Results.push_back(3);
-    Results.push_back(-2);
-    Results.push_back(4);
-    Results.push_back(-1);
-    Results.push_back(6);
-    Results.push_back(-4);
-    Results.push_back(9);
-    Decompress();
-
-    for(vector<sf::Uint8>::size_type i=0 ; i<ScaledValues.size() ; ++i) {
-        cout << static_cast<unsigned short>(ScaledValues[i]) << " ";
-    }
-
-    cout << endl;
-}
 
 
 void ByteRun::Compress() {

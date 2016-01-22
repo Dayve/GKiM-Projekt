@@ -2,23 +2,21 @@
 #define _FILEWRAPPER_HPP_
 
 #include <SFML/Graphics.hpp>
-#include <vector>
-
 #include "../../../SharedCode/BinaryFile/BinaryFile.hpp"
 
 class FileWrapper {
-	private:
-		BinaryFile inputFile;
-		sf::Image resultImg;
+    private:
+        BinaryFile inputFile;
+        sf::Image resultImg;
 
-		bool loadedFlag;
+        bool loadedFlag;
 
-	public:
-		FileWrapper();
-		~FileWrapper() {}
+    public:
+        FileWrapper();
+        ~FileWrapper() {}
 
-		void Load(const std::string& pathWname);
-		void ExportBMP();
+        void Load(const std::string& pathWname);
+        void ExportBMP();
 
 };
 

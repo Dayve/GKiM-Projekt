@@ -1,17 +1,12 @@
 #include "BinaryFile.hpp"
 #include <cmath>
+#include <iostream>
 #include <fstream>
-#include <bitset>
-
-#include <cstdio>
-#include <cstring>
-
 using namespace std;
 
 
 void BinaryFile::FetchValuesFromImg(sf::Image& image) {
-    // Fetching from an image (sf::Image -> sf::Uint8) to pixelValues (std::vector<sf::Uint8>):
-	cout << " -> Fetching values from an image...\n";
+    cout << " -> Fetching values from an image...\n";
 
     for(unsigned int yy=0 ; yy<image.getSize().y ; ++yy) {
         for(unsigned int xx=0 ; xx<image.getSize().x ; ++xx) {
@@ -29,65 +24,65 @@ bool BinaryFile::ExportFromImg(sf::Image& image, unsigned char codingType, bool 
     vector<bool> bitBuffer;  // Holds the results of converting the pixel values (scaled down to fit in 5 bits) from decimal to binary
 
     // We scale the pixel values down to 5 bits and put results in the bitBuffer:
-    // We've put for loops inside if blocks and not the other way around, because this way we check condidion only once.
-	// Probably we should do something similar with nested switch, but it would increase the amount of code too much.
-	//
-	cout << " -> Scaling values...\n";
+    // (We've put for loops inside if blocks and not the other way around, because this way we check condidion only once.
+    // Probably we should do something similar with nested switch, but it would increase the amount of code drastically.)
+
+    cout << " -> Scaling values...\n";
 
     if(grayscale) {
         for(vector<sf::Uint8>::size_type i=0 ; i<pixelValues.size() ; i += 3) {
             sf::Uint8 avgColor = (pixelValues[i] + pixelValues[i+1] + pixelValues[i+2])/3;  // Calculate the grayscale equivalent of a given color
             sf::Uint8 scaledVal = (avgColor * (pow(2.0, Block::NR_BITS)-1))/255.0;          // Scale down to 5 bits in the temporary variable
             
-			switch(codingType) {
-				case 2: // (Scaling to 5-bit values)
-					for(int w=0 ; w<Block::NR_BITS ; ++w) {
-						bitBuffer.push_back(scaledVal % 2);
-						scaledVal /= 2;
-					}
-					break;
+            switch(codingType) {
+                case 2: // (Scaling to 5-bit values)
+                    for(int w=0 ; w<Block::NR_BITS ; ++w) {
+                        bitBuffer.push_back(scaledVal % 2);
+                        scaledVal /= 2;
+                    }
+                    break;
 
-				case 1: // Byterun
-					BRun.ScaledValues.push_back(scaledVal);
-					break;
+                case 1: // Byterun
+                    BRun.ScaledValues.push_back(scaledVal);
+                    break;
 
-				case 0: // Arithmetic Coding
-					ACoding.ScaledValues.push_back(scaledVal);
-					break;
-			}
+                case 0: // Arithmetic Coding
+                    ACoding.ScaledValues.push_back(scaledVal);
+                    break;
+            }
         }
     }
     else {
         for(vector<sf::Uint8>::size_type i=0 ; i<pixelValues.size() ; ++i) {
-            sf::Uint8 scaledVal = (pixelValues[i] * (pow(2.0, Block::NR_BITS)-1))/255.0;	// Scale down to 5 bits in the temporary variable
+            sf::Uint8 scaledVal = (pixelValues[i] * (pow(2.0, Block::NR_BITS)-1))/255.0;    // Scale down to 5 bits in the temporary variable
 
-			switch(codingType) {
-				case 2: // (Scaling to 5-bit values)
-					for(int w=0 ; w<Block::NR_BITS ; ++w) {
-						bitBuffer.push_back(scaledVal % 2);
-						scaledVal /= 2;
-					}
-					break;
+            switch(codingType) {
+                case 2: // (Scaling to 5-bit values)
+                    for(int w=0 ; w<Block::NR_BITS ; ++w) {
+                        bitBuffer.push_back(scaledVal % 2);
+                        scaledVal /= 2;
+                    }
+                    break;
 
-				case 1: // Byterun
-					BRun.ScaledValues.push_back(scaledVal);
-					break;
+                case 1: // Byterun
+                    BRun.ScaledValues.push_back(scaledVal);
+                    break;
 
-				case 0: // Arithmetic Coding
-					ACoding.ScaledValues.push_back(scaledVal);
-					break;
-			}
+                case 0: // Arithmetic Coding
+                    ACoding.ScaledValues.push_back(scaledVal);
+                    break;
+            }
         }
     }
 
-	imgW = image.getSize().x;
-	imgH = image.getSize().y;
-	uint32_t numValuesInFile = 0;
+    imgW = image.getSize().x;
+    imgH = image.getSize().y;
+    uint32_t numValuesInFile = 0;
 
-	cout << " -> Compressing...\n";
+    cout << " -> Compressing...\n";
 
     if(codingType == 2) {
-        // Every NR_BITS bits in bitBuffer are in reverse order, so we fix that: (could be integrated with /case 2/)
+        // Every NR_BITS bits in bitBuffer are in reverse order, so we fix that: (TODO: could be integrated with /case 2/)
         for(vector<bool>::size_type i=0 ; i<bitBuffer.size()/Block::NR_BITS ; ++i) {
             // NR_BITS/2 will be rounded down for odd numbers, but this is fine, because the middle bit won't be swapped anyway:
             for(int j=0 ; j<Block::NR_BITS/2 ; ++j) swap(bitBuffer[j + i*Block::NR_BITS], bitBuffer[Block::NR_BITS-1-j + i*Block::NR_BITS]);
@@ -105,39 +100,40 @@ bool BinaryFile::ExportFromImg(sf::Image& image, unsigned char codingType, bool 
             if(bitBuffer[i]) blocks[blockIndex].setBit(j);
         }
 
-		numValuesInFile = grayscale ? imgW*imgH : imgW*imgH*3;
+        numValuesInFile = grayscale ? imgW*imgH : imgW*imgH*3;
     }
     else {
         if(codingType) {
-			BRun.Compress();
-			numValuesInFile = BRun.Results.size();
-		}
+            BRun.Compress();
+            numValuesInFile = BRun.Results.size();
+        }
         else {
-			ACoding.Compress();
-			numValuesInFile = ACoding.Results.size();
-		}
+            ACoding.Compress();
+            numValuesInFile = ACoding.Results.size();
+        }
     }
 
-    /* ---------------------------------------------------------------------------------------
-    Header of the binary file:
+    /* ----------------------------------------------------------------------------------------
+    Header of the binary file: (9B)
      1) 2 Bytes for width of an image
      2) 2 Bytes for height of an image
+     2) 4 Bytes for the amount of values (respectively: floats, chars or 5-bit sequences)
      3) 1 Byte for coding type and grayscale info:
       a) Grayscale - on most significant bit (0 colored, 1 grayscale)
       b) Coding type - as a number (0 Arithmetic Coding, 1 Byterun, 2 scaling to 5-bit values)
 
-     We can later deduce the number of blocks/pixels from width and height.
-     -------------------------------------------------------------------------------------- */
+     We can later deduce the number of blocks/pixels from width and height or number of values.
+     --------------------------------------------------------------------------------------- */
 
     ofstream outputFile(resultPathWithName.c_str(), ios::binary | ios::out);
-	if(outputFile.fail()) return false;
+    if(outputFile.fail()) return false;
 
     unsigned char codingAndGrayscaleData = codingType;
 
     if(grayscale) codingAndGrayscaleData |= 0b10000000;     // C++14
-    //if(grayscale) codingAndGrayscaleData += pow(2, 7);		// Older
-	//
-	cout << " -> Writing binary file...\n";
+    //if(grayscale) codingAndGrayscaleData += pow(2, 7);        // Older
+
+    cout << " -> Writing binary file...\n";
 
     // Writing header:
     outputFile.write(reinterpret_cast<const char*>(&imgW), sizeof(imgW));
@@ -145,7 +141,7 @@ bool BinaryFile::ExportFromImg(sf::Image& image, unsigned char codingType, bool 
     outputFile.write(reinterpret_cast<const char*>(&numValuesInFile), sizeof(numValuesInFile));
     outputFile.write(reinterpret_cast<const char*>(&codingAndGrayscaleData), sizeof(codingAndGrayscaleData));
 
-	// Writing values:
+    // Writing values:
     if(codingType == 2) {
         // Writing blocks (5 bytes each, hence the second parameter is "blocks.size()*Block::NR_BITS"):
         void* bufferFront = blocks[0].getBytesAddr();
@@ -158,7 +154,7 @@ bool BinaryFile::ExportFromImg(sf::Image& image, unsigned char codingType, bool 
     }
 
     outputFile.close();
-	return true;
+    return true;
 }
 
 
@@ -167,11 +163,11 @@ bool BinaryFile::ImportFromFile(const std::string& pathWithName) {
     ifstream inputFile(pathWithName.c_str(), ios::binary | ios::in);
     if(inputFile.fail()) return false;
 
-	cout << " -> Binary file " << pathWithName << " successfully loaded\n";
+    cout << " -> Binary file " << pathWithName << " successfully loaded\n";
 
     bool grayscale = false;
     unsigned char codingType;
-	uint32_t numValuesInFile;
+    uint32_t numValuesInFile;
 
     // Read the header:
     inputFile.read(reinterpret_cast<char*>(&imgW), sizeof(imgW));
@@ -201,7 +197,7 @@ bool BinaryFile::ImportFromFile(const std::string& pathWithName) {
     cout << " Image dimensions: " << imgW << "x" << imgH << endl;
     cout << "--------------------------------------\n";
 
-	cout << " -> Reading data & decompressing...\n";
+    cout << " -> Reading data & decompressing...\n";
 
     if (codingType == 2) {
         // Calculate the number of blocks based of the amount of the values in a file:
@@ -281,7 +277,8 @@ bool BinaryFile::ImportFromFile(const std::string& pathWithName) {
                 ACoding.Results.push_back(resultFromFile);
             }
 
-            ACoding.Decompress(numValuesInFile);
+            // We forward the amount of values that should be decompressed:
+            ACoding.Decompress(grayscale ? imgW*imgH : imgW*imgH*3); 
 
             int addedValuesCounter = 0;
             for(vector<sf::Uint8>::size_type s=0 ; s<ACoding.ScaledValues.size() ; ++s) {

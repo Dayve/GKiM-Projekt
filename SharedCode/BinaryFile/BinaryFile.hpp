@@ -7,9 +7,6 @@
 
 #include <SFML/Graphics.hpp>
 #include <vector>
-#include <iostream>
-#include <stdint.h>
-#include <string>
 
 class BinaryFile {
     public:
