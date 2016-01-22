@@ -13,17 +13,21 @@ ImageWrapper::ImageWrapper() :
 
 void ImageWrapper::Load(const string& pathWname) {
 	if(img.loadFromFile(pathWname)) {
-		cout << pathWname <<" successfully loaded\n";
+		cout << " -> Bitmap " << pathWname <<" successfully loaded\n";
 		loadedFlag = true;
 	}
-	else cout << "Error while loading image.\n";
+	else cout << " -> Error while loading image (" << pathWname << ")\n";
 }
 
 
 void ImageWrapper::ExportFile(unsigned char codingType, bool grayscale) {
 	if(!loadedFlag) return;
 
-	outputFile.ExportFromImg(img, codingType, grayscale, "../data/output.file");
-	cout << "Binary file exported (output.file)\n";
+	string outputFilename = "../data/output.file";
+
+	if(outputFile.ExportFromImg(img, codingType, grayscale, outputFilename)) {
+		cout << " -> Binary file exported (" << outputFilename << ")\n";
+	}
+	else cout << " -> Error while exporting binary file (" << outputFilename << ")\n";
 }
 

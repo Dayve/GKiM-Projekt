@@ -4,8 +4,6 @@
 #include <cmath>
 using namespace std;
 
-// TODO: Add support for series of values (at the end) shorter than SEQ_LEN
-
 
 void ArithmeticCoding::Test() { // TODO: Remove
     ScaledValues.push_back(rand()%32);
@@ -13,7 +11,7 @@ void ArithmeticCoding::Test() { // TODO: Remove
     ScaledValues.push_back(rand()%32);
     ScaledValues.push_back(rand()%32);
 
-    for(int i=0 ; i<ScaledValues.size() ; ++i) {
+    for(vector<sf::Uint8>::size_type i=0 ; i<ScaledValues.size() ; ++i) {
         cout << static_cast<unsigned short>(ScaledValues[i]) << " ";
     }
     cout << endl;
@@ -21,14 +19,14 @@ void ArithmeticCoding::Test() { // TODO: Remove
     Results.clear();
     Compress();
     
-    for(int i=0 ; i<Results.size() ; ++i) {
+    for(vector<float>::size_type i=0 ; i<Results.size() ; ++i) {
         cout << setprecision(8) << Results[i] << endl;
     }
 
     ScaledValues.clear();
-    Decompress();
+    Decompress(ScaledValues.size());
 
-    for(int i=0 ; i<ScaledValues.size() ; ++i) {
+    for(vector<sf::Uint8>::size_type i=0 ; i<ScaledValues.size() ; ++i) {
         cout << static_cast<unsigned short>(ScaledValues[i]) << " ";
     }
     cout << endl;
@@ -41,7 +39,7 @@ void ArithmeticCoding::Compress() {
 
     float lowerBound = 0.0f, upperBound = PROB;
 
-    for(int i=0, j=0 ; i<ScaledValues.size()+1 /*+1 because of writing (L45)*/ ; ++i, ++j) {
+    for(vector<sf::Uint8>::size_type i=0, j=0 ; i<ScaledValues.size()+1 /*+1 because of writing (L48)*/ ; ++i, ++j) {
         bool lastPass = (i == ScaledValues.size());
 
         if(j == SEQ_LEN or lastPass) {
@@ -56,14 +54,16 @@ void ArithmeticCoding::Compress() {
 }
 
 
-void ArithmeticCoding::Decompress() {
+void ArithmeticCoding::Decompress(uint32_t nValues) {
     // Empty "ScaledValues" vector
     // Data in "Results" vector
+
+    // TODO: Add support for series of values (at the end) shorter than SEQ_LEN, using nValues
 
     float upperBound = PROB, lowerBound = 0.0f;
     sf::Uint8 decodedValue = 0;
 
-    for(int i=0 ; i<Results.size() ; ++i) {
+    for(vector<float>::size_type i=0 ; i<Results.size() ; ++i) {
         for(int n=1 ; n<(SEQ_LEN+1) ; ++n) {
             while(not (Results[i] > lowerBound and Results[i] < lowerBound+upperBound)) {
                 lowerBound += pow(PROB, n);

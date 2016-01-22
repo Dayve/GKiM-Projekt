@@ -1,5 +1,7 @@
 # Folders with local/generated files:
 **/bin
 **/data
+
+# Vim session files:
 *.vim
 

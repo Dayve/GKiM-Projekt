@@ -9,7 +9,7 @@
 class ArithmeticCoding {
     public:
         void Compress();
-        void Decompress();
+        void Decompress(uint32_t nValues);
 
         void Test(); // TODO: Remove
 

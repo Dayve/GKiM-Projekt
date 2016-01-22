@@ -16,7 +16,7 @@ void ByteRun::Test() { // TODO: Remove
     ScaledValues.push_back(31);
     Compress();
     
-    for(int i=0 ; i<Results.size() ; ++i) {
+    for(vector<char>::size_type i=0 ; i<Results.size() ; ++i) {
         cout << static_cast<short>(Results[i]) << " ";
     }
 
@@ -38,7 +38,7 @@ void ByteRun::Test() { // TODO: Remove
     Results.push_back(9);
     Decompress();
 
-    for(int i=0 ; i<ScaledValues.size() ; ++i) {
+    for(vector<sf::Uint8>::size_type i=0 ; i<ScaledValues.size() ; ++i) {
         cout << static_cast<unsigned short>(ScaledValues[i]) << " ";
     }
 
@@ -47,8 +47,7 @@ void ByteRun::Test() { // TODO: Remove
 
 
 void ByteRun::Compress() {
-    int i = 0;
-    int length = ScaledValues.size();
+    vector<sf::Uint8>::size_type length = ScaledValues.size(), i=0, j=0;
 
     // Until every byte is compressed:
     while (i < length)
@@ -56,7 +55,7 @@ void ByteRun::Compress() {
         // Sequence of repeated bytes:
         if ((i < length-1) and (ScaledValues[i] == ScaledValues[i+1])) {
             // Calculate the length of a sequence:
-            int j = 0;
+            j = 0;
             while ((i+j < length-1) and (ScaledValues[i+j] == ScaledValues[i+j+1]) and (j < 127)) j++;
 
             // Save compressed sequence:
@@ -69,7 +68,7 @@ void ByteRun::Compress() {
         // Sequence of different bytes:
         else {
             // Calculate the length of a sequence:
-            int j=0;
+            j=0;
             while ((i+j < length-1) and (ScaledValues[i+j] != ScaledValues[j+i+1]) and (j < 128)) j++;
 
             // And ending:
@@ -77,7 +76,7 @@ void ByteRun::Compress() {
 
             // Save compressed sequence:
             Results.push_back(j-1);
-            for (int k=0; k<j; k++) {
+            for (vector<sf::Uint8>::size_type k=0; k<j; k++) {
                 Results.push_back((char)ScaledValues[i+k]);
             }
 
