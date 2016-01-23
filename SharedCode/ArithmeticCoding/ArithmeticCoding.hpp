@@ -10,13 +10,13 @@ class ArithmeticCoding {
         void Decompress(uint32_t nValues);
 
         std::vector<sf::Uint8> ScaledValues;    // The algorithm will operate on those
-        std::vector<float> Results;             // Output sequence of the algorithm
+        std::vector<double> Results;             // Output sequence of the algorithm
 
         void* GetResultsAddr();
 
     private:
-        constexpr static float PROB = 1.0f/32.0f;   // Fixed probability
-        const static unsigned SEQ_LEN = 4;          // Length of sequence per float
+        constexpr static double PROB = 1.0f/32.0f;   // Fixed probability
+        const static unsigned SEQ_LEN = 10;          // Length of sequence per double
 };
 
 #endif

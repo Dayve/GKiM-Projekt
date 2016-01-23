@@ -3,7 +3,7 @@ using namespace std;
 
 
 void ArithmeticCoding::Compress() {
-    float lowerBound = 0.0f, upperBound = PROB;
+    double lowerBound = 0.0f, upperBound = PROB;
 
     for(vector<sf::Uint8>::size_type i=0, j=0 ; i<ScaledValues.size()+1 /*+1 because of writing (L15)*/ ; ++i, ++j) {
         bool lastPass = (i == ScaledValues.size());
@@ -23,16 +23,17 @@ void ArithmeticCoding::Compress() {
 
 
 void ArithmeticCoding::Decompress(uint32_t nValues) {
-    float upperBound = PROB, lowerBound = 0.0f;
+    double upperBound = PROB, lowerBound = 0.0f;
     sf::Uint8 decodedValue = 0;
 
-    // Number of nested for loop iterations: (used when last float represents less than SEQ_LEN numbers)
-    unsigned numReps = nValues % SEQ_LEN;
+    // Number of nested for loop iterations: (used when last double represents less than SEQ_LEN numbers)
+    unsigned numReps = (nValues % SEQ_LEN) + 1;
+    bool anyLeft = ((nValues % SEQ_LEN) != 0);
 
-    for(vector<float>::size_type i=0 ; i<Results.size() ; ++i) {
+    for(vector<double>::size_type i=0 ; i<Results.size() ; ++i) {
         bool lastPass = (i == Results.size()-1);
 
-        for(unsigned n=1 ; n < (lastPass ? numReps : SEQ_LEN+1) ; ++n) {
+        for(unsigned n=1 ; n < (lastPass and anyLeft ? numReps : SEQ_LEN+1) ; ++n) {
             while(not (Results[i] > lowerBound and Results[i] < lowerBound+upperBound)) {
                 lowerBound += pow(PROB, n);
                 decodedValue += 1;

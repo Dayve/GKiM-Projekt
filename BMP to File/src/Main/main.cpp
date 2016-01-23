@@ -2,8 +2,6 @@
 #include <iostream>
 #include <cstdlib>
 
-#include "../../../SharedCode/ByteRun/ByteRun.hpp"
-
 using namespace std; 
 
 int main(int argc, char* argv[]) {

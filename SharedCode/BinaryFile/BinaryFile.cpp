@@ -117,7 +117,7 @@ bool BinaryFile::ExportFromImg(sf::Image& image, unsigned char codingType, bool 
     Header of the binary file: (9B)
      1) 2 Bytes for width of an image
      2) 2 Bytes for height of an image
-     2) 4 Bytes for the amount of values (respectively: floats, chars or 5-bit sequences)
+     2) 4 Bytes for the amount of values (respectively: doubles, chars or 5-bit sequences)
      3) 1 Byte for coding type and grayscale info:
       a) Grayscale - on most significant bit (0 colored, 1 grayscale)
       b) Coding type - as a number (0 Arithmetic Coding, 1 Byterun, 2 scaling to 5-bit values)
@@ -150,7 +150,7 @@ bool BinaryFile::ExportFromImg(sf::Image& image, unsigned char codingType, bool 
     else {
         // Writing results:
         if(codingType) outputFile.write(static_cast<const char*>(BRun.GetResultsAddr()), BRun.Results.size());
-        else outputFile.write(static_cast<const char*>(ACoding.GetResultsAddr()), ACoding.Results.size() * sizeof(float));
+        else outputFile.write(static_cast<const char*>(ACoding.GetResultsAddr()), ACoding.Results.size() * sizeof(double));
     }
 
     outputFile.close();
@@ -273,7 +273,7 @@ bool BinaryFile::ImportFromFile(const std::string& pathWithName) {
         }
         else { // Arithmetic Coding
             for(uint32_t p=0 ; p<numValuesInFile ; ++p) {
-                float resultFromFile;
+                double resultFromFile;
                 inputFile.read(reinterpret_cast<char*>(&resultFromFile), sizeof(resultFromFile));
                 ACoding.Results.push_back(resultFromFile);
             }
