@@ -17,6 +17,8 @@ void ArithmeticCoding::Compress() {
         lowerBound += ScaledValues[i] * pow(PROB, j+1);
         upperBound = lowerBound + pow(PROB, j+1);
     }
+
+    ScaledValues.clear();
 }
 
 
@@ -45,6 +47,8 @@ void ArithmeticCoding::Decompress(uint32_t nValues) {
         upperBound = PROB, lowerBound = 0.0f;
         decodedValue = 0;
     }
+
+    Results.clear();
 }
 
 

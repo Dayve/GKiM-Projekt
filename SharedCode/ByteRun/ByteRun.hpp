@@ -6,8 +6,8 @@
 
 class ByteRun {
     public:
-        void Compress();
-        void Decompress();
+        void Compress(bool valuesAreInGrayscale);
+        void Decompress(bool valuesAreInGrayscale);
 
         std::vector<sf::Uint8> ScaledValues;    // The algorithm will operate on those
         std::vector<char> Results;              // Output sequence of the algorithm

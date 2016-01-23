@@ -53,8 +53,8 @@ bool BinaryFile::ExportFromImg(sf::Image& image, unsigned char codingType, bool 
         }
     }
     else {
-        for(vector<sf::Uint8>::size_type i=0 ; i<pixelValues.size() ; ++i) {
-            sf::Uint8 scaledVal = (pixelValues[i] * (pow(2.0, Block::NR_BITS)-1))/255.0;    // Scale down to 5 bits in the temporary variable
+        for(auto pxValue : pixelValues) {
+            sf::Uint8 scaledVal = (pxValue * (pow(2.0, Block::NR_BITS)-1))/255.0;    // Scale down to 5 bits in the temporary variable
 
             switch(codingType) {
                 case 2: // (Scaling to 5-bit values)
@@ -104,7 +104,7 @@ bool BinaryFile::ExportFromImg(sf::Image& image, unsigned char codingType, bool 
     }
     else {
         if(codingType) {
-            BRun.Compress();
+            BRun.Compress(grayscale);
             numValuesInFile = BRun.Results.size();
         }
         else {
@@ -201,6 +201,7 @@ bool BinaryFile::ImportFromFile(const std::string& pathWithName) {
 
     if (codingType == 2) {
         // Calculate the number of blocks based of the amount of the values in a file:
+		// (If the amount of bits fits in an integral number of Blocks, then we get this number, if not, then we add one Block at the end)
         int numBlocks = ((numValuesInFile * Block::NR_BITS) % (Block::NR_BITS*8)) ? 
                         ((numValuesInFile * Block::NR_BITS) / (Block::NR_BITS*8)) + 1 : 
                         ((numValuesInFile * Block::NR_BITS) / (Block::NR_BITS*8));
@@ -215,14 +216,14 @@ bool BinaryFile::ImportFromFile(const std::string& pathWithName) {
         // and added (so that we know where to put the alpha channel values):
         uint32_t readedValuesCounter = 0, addedValuesCounter = 0;
 
-        for(vector<Block>::size_type i=0 ; i<blocks.size() ; ++i) {  // For every block
+        for(auto block : blocks) { 		// For every block
             for(int j=0 ; j<8 ; ++j) {  // For every five bits (there are 8 fives in every block)
                 if(readedValuesCounter == numValuesInFile) return true;
 
                 sf::Uint8 valueFromBits = 0;
 
                 for(int k=0 ; k<Block::NR_BITS ; ++k) {  // For every bit
-                    if(blocks[i].getBit(j*Block::NR_BITS + k)) valueFromBits += pow(2, Block::NR_BITS-1 - k);
+                    if(block.getBit(j*Block::NR_BITS + k)) valueFromBits += pow(2, Block::NR_BITS-1 - k);
                 }
 
                 // Scale value back to 8 bits:
@@ -251,11 +252,11 @@ bool BinaryFile::ImportFromFile(const std::string& pathWithName) {
                 BRun.Results.push_back(resultFromFile);
             }
 
-            BRun.Decompress();
+            BRun.Decompress(grayscale);
 
             int addedValuesCounter = 0;
-            for(vector<sf::Uint8>::size_type s=0 ; s<BRun.ScaledValues.size() ; ++s) {
-                sf::Uint8 scaledBack = (BRun.ScaledValues[s] * 255.0)/(pow(2.0, Block::NR_BITS)-1);
+            for(auto sValue : BRun.ScaledValues) {
+                sf::Uint8 scaledBack = (sValue * 255.0)/(pow(2.0, Block::NR_BITS)-1);
 
                 int t = 1;
                 if(grayscale) t = 3; // If grayscale is set we put there 3 identical values (one for each channel)
@@ -281,8 +282,8 @@ bool BinaryFile::ImportFromFile(const std::string& pathWithName) {
             ACoding.Decompress(grayscale ? imgW*imgH : imgW*imgH*3); 
 
             int addedValuesCounter = 0;
-            for(vector<sf::Uint8>::size_type s=0 ; s<ACoding.ScaledValues.size() ; ++s) {
-                sf::Uint8 scaledBack = (ACoding.ScaledValues[s] * 255.0)/(pow(2.0, Block::NR_BITS)-1);
+            for(auto sValue : ACoding.ScaledValues) {
+                sf::Uint8 scaledBack = (sValue * 255.0)/(pow(2.0, Block::NR_BITS)-1);
 
                 int t = 1;
                 if(grayscale) t = 3; // If grayscale is set we put there 3 identical values (one for each channel)
