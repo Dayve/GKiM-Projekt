@@ -54,7 +54,7 @@ Opcjonalnie:
     W bieżącym układzie folderów będzie to np: `./btf ../data/small.bmp 1 0`. 
     
   + Żeby przetestować poprawność działania dla bieżącego układu folderów musimy skopiować wygenerowany przez **btf** plik: <br/>`cp BMP\ to\ File/data/output.file File\ to\ BMP/data/`<br/>
-  Jeśli nie chcielibyśmy tego robić to oczywiście możemy zmienić [ścieżkę](https://github.com/Dayve/GKiM-Projekt/blob/master/BMP%20to%20File/src/ImageWrapper/ImageWrapper.cpp#L26), pod którą program zapisuje plik "output.file". Podobnie możemy zmienić [ścieżkę](https://github.com/Dayve/GKiM-Projekt/blob/master/File%20to%20BMP/src/FileWrapper/FileWrapper.cpp#L22), pod którą jest zapisywany generowany plik BMP.
+  Jeśli nie chcielibyśmy tego robić to oczywiście możemy zmienić [ścieżkę](https://github.com/Dayve/GKiM-Projekt/blob/master/BMP%20to%20File/src/ImageWrapper/ImageWrapper.cpp#L23), pod którą program zapisuje plik "output.file". Podobnie możemy zmienić [ścieżkę](https://github.com/Dayve/GKiM-Projekt/blob/master/File%20to%20BMP/src/FileWrapper/FileWrapper.cpp#L21), pod którą jest zapisywany generowany plik BMP.
   
   + Dla programu **ftb** podajemy:
     - Jako jedyny argument ścieżkę do pliku binarnego (z nazwą i rozszerzeniem .file)
