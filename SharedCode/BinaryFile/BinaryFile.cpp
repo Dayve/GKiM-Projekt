@@ -32,7 +32,8 @@ bool BinaryFile::ExportFromImg(sf::Image& image, unsigned char codingType, bool 
     if(grayscale) {
         for(vector<sf::Uint8>::size_type i=0 ; i<pixelValues.size() ; i += 3) {
             sf::Uint8 avgColor = (pixelValues[i] + pixelValues[i+1] + pixelValues[i+2])/3;  // Calculate the grayscale equivalent of a given color
-            sf::Uint8 scaledVal = (avgColor * (pow(2.0, Block::NR_BITS)-1))/255.0;          // Scale down to 5 bits in the temporary variable
+            //sf::Uint8 scaledVal = (avgColor * (pow(2.0, Block::NR_BITS)-1))/255.0;    // Scale down to 5 bits in the temporary variable
+            sf::Uint8 scaledVal = avgColor / pow(2.0, 8-Block::NR_BITS);                // Seems to produces a brighter image, closer to original
             
             switch(codingType) {
                 case 2: // (Scaling to 5-bit values)
@@ -229,7 +230,8 @@ bool BinaryFile::ImportFromFile(const std::string& pathWithName) {
                 }
 
                 // Scale value back to 8 bits:
-                valueFromBits = (valueFromBits*255.0)/(pow(2.0, Block::NR_BITS)-1);
+                //valueFromBits = (valueFromBits*255.0)/(pow(2.0, Block::NR_BITS)-1);
+                valueFromBits = valueFromBits * pow(2.0, 8-Block::NR_BITS); // Seems to produce a brighter image, closer to original
                 readedValuesCounter++;
 
                 int t = 1;
