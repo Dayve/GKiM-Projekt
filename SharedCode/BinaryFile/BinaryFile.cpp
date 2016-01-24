@@ -194,7 +194,9 @@ bool BinaryFile::ImportFromFile(const std::string& pathWithName) {
     cout << "DETECTED OPTIONS: --------------------\n";
     cout << " Grayscale: " << (grayscale ? "Yes" : "No") << endl;
     cout << " Coding type: " << codingMethodsName << endl;
+    cout << "--------------------------------------\n";
     cout << " Image dimensions: " << imgW << "x" << imgH << endl;
+    cout << " Number of values in the file: " << numValuesInFile << endl;
     cout << "--------------------------------------\n";
 
     cout << " -> Reading data & decompressing...\n";
