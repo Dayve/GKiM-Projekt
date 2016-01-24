@@ -32,8 +32,8 @@ bool BinaryFile::ExportFromImg(sf::Image& image, unsigned char codingType, bool 
     if(grayscale) {
         for(vector<sf::Uint8>::size_type i=0 ; i<pixelValues.size() ; i += 3) {
             sf::Uint8 avgColor = (pixelValues[i] + pixelValues[i+1] + pixelValues[i+2])/3;  // Calculate the grayscale equivalent of a given color
-            //sf::Uint8 scaledVal = (avgColor * (pow(2.0, Block::NR_BITS)-1))/255.0;    // Scale down to 5 bits in the temporary variable
-            sf::Uint8 scaledVal = avgColor / pow(2.0, 8-Block::NR_BITS);                // Seems to produces a brighter image, closer to original
+            //sf::Uint8 scaledVal = (avgColor * (pow(2, Block::NR_BITS)-1))/255;  // Scale down to 5 bits in the temporary variable
+            sf::Uint8 scaledVal = avgColor >> (8-Block::NR_BITS);                 // Seems to produce a brighter image, closer to the original
             
             switch(codingType) {
                 case 2: // (Scaling to 5-bit values)
@@ -55,7 +55,8 @@ bool BinaryFile::ExportFromImg(sf::Image& image, unsigned char codingType, bool 
     }
     else {
         for(auto pxValue : pixelValues) {
-            sf::Uint8 scaledVal = (pxValue * (pow(2.0, Block::NR_BITS)-1))/255.0;    // Scale down to 5 bits in the temporary variable
+            //sf::Uint8 scaledVal = (pxValue * (pow(2, Block::NR_BITS)-1))/255; // Scale down to 5 bits in the temporary variable
+            sf::Uint8 scaledVal = pxValue >> (8-Block::NR_BITS);                // Seems to produce a brighter image, closer to the original
 
             switch(codingType) {
                 case 2: // (Scaling to 5-bit values)
@@ -230,8 +231,8 @@ bool BinaryFile::ImportFromFile(const std::string& pathWithName) {
                 }
 
                 // Scale value back to 8 bits:
-                //valueFromBits = (valueFromBits*255.0)/(pow(2.0, Block::NR_BITS)-1);
-                valueFromBits = valueFromBits * pow(2.0, 8-Block::NR_BITS); // Seems to produce a brighter image, closer to original
+                //valueFromBits = (valueFromBits*255)/(pow(2, Block::NR_BITS)-1);
+                valueFromBits = valueFromBits << (8-Block::NR_BITS); // Seems to produce a brighter image, closer to the original
                 readedValuesCounter++;
 
                 int t = 1;
@@ -260,7 +261,8 @@ bool BinaryFile::ImportFromFile(const std::string& pathWithName) {
 
             int addedValuesCounter = 0;
             for(auto sValue : BRun.ScaledValues) {
-                sf::Uint8 scaledBack = (sValue * 255.0)/(pow(2.0, Block::NR_BITS)-1);
+                //sf::Uint8 scaledBack = (sValue * 255)/(pow(2, Block::NR_BITS)-1);
+                sf::Uint8 scaledBack = sValue << (8-Block::NR_BITS); // Seems to produce a brighter image, closer to the original
 
                 int t = 1;
                 if(grayscale) t = 3; // If grayscale is set we put there 3 identical values (one for each channel)
@@ -287,7 +289,8 @@ bool BinaryFile::ImportFromFile(const std::string& pathWithName) {
 
             int addedValuesCounter = 0;
             for(auto sValue : ACoding.ScaledValues) {
-                sf::Uint8 scaledBack = (sValue * 255.0)/(pow(2.0, Block::NR_BITS)-1);
+                //sf::Uint8 scaledBack = (sValue * 255)/(pow(2, Block::NR_BITS)-1);
+                sf::Uint8 scaledBack = sValue << (8-Block::NR_BITS); // Seems to produce a brighter image, closer to the original
 
                 int t = 1;
                 if(grayscale) t = 3; // If grayscale is set we put there 3 identical values (one for each channel)
